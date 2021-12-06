@@ -26,7 +26,7 @@ keda_v2_enabled = false
 
 resource_tags = {
   environment = "Self Managed OSDU"
-  contact = "<your_name>"
+  contact = "jayant.kizhepatt@microsoft.com"
   repo = "https://github.dev/danielscholl/self-managed-osdu"
 }
 
