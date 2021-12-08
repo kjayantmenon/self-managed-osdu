@@ -7,10 +7,10 @@ metadata:
 spec:
   values:
     ingress:
-      dns: osdu-self-dpldbchg-oblk-gw.centralus.cloudapp.azure.com
+      dns: osdu-self-dplcjfdf-epug-gw.centralus.cloudapp.azure.com
     configuration:
     - service: search
-      repository: osduselfcpldbcpngycr.azurecr.io/search
+      repository: osduselfcplcjfjprvcr.azurecr.io/search
       path: /api/search/v2/*
       probe:
         path: /api/search/v2/swagger-ui.html
@@ -42,7 +42,7 @@ spec:
       - name: ACCEPT_HTTP
         value: "true"
       - name: APPLICATIONINSIGHTS_CONNECTION_STRING
-        value: "InstrumentationKey=2dba9ace-910a-4149-adfe-a2bb34dc223e"
+        value: "InstrumentationKey=e803805c-c38e-48a6-aa3f-e15379b7dab6"
       - name: cosmosdb_database
         value: "osdu-db"
       - name: entitlements_service_endpoint
@@ -68,7 +68,7 @@ spec:
       - name: azure_istioauth_enabled
         value: "true"
       - name: azure_activedirectory_AppIdUri
-        value: "api://c268ca47-1767-426b-81ba-dbd3443a9f6f"
+        value: "api://3c836fe6-c422-4dde-b8ea-de95c23c98d6"
       - name: KEYVAULT_URI
         config:
           name: osdu-svc-config

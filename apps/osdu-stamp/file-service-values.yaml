@@ -7,10 +7,10 @@ metadata:
 spec:
   values:
     ingress:
-      dns: osdu-self-dpldbchg-oblk-gw.centralus.cloudapp.azure.com
+      dns: osdu-self-dplcjfdf-epug-gw.centralus.cloudapp.azure.com
     configuration:
     - service: file
-      repository: osduselfcpldbcpngycr.azurecr.io/file
+      repository: osduselfcplcjfjprvcr.azurecr.io/file
       path: /api/file/*
       probe:
         path: /api/file/v2/readiness_check

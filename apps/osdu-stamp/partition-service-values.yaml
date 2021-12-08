@@ -7,10 +7,10 @@ metadata:
 spec:
   values:
     ingress:
-      dns: osdu-self-dpldbchg-oblk-gw.centralus.cloudapp.azure.com
+      dns: osdu-self-dplcjfdf-epug-gw.centralus.cloudapp.azure.com
     configuration:
     - service: partition
-      repository: osduselfcpldbcpngycr.azurecr.io/partition
+      repository: osduselfcplcjfjprvcr.azurecr.io/partition
       path: /api/partition/v1/*
       probe:
         path: /actuator/health
@@ -45,7 +45,7 @@ spec:
       - name: partition_spring_logging_level
         value: "INFO"
       - name: azure_activedirectory_AppIdUri
-        value: "api://c268ca47-1767-426b-81ba-dbd3443a9f6f"
+        value: "api://3c836fe6-c422-4dde-b8ea-de95c23c98d6"
       - name: azure_activedirectory_session_stateless
         value: "false"
       - name: azure_paas_podIdentity_isEnabled

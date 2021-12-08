@@ -7,10 +7,10 @@ metadata:
 spec:
   values:
     ingress:
-      dns: osdu-self-dpldbchg-oblk-gw.centralus.cloudapp.azure.com
+      dns: osdu-self-dplcjfdf-epug-gw.centralus.cloudapp.azure.com
     configuration:
     - service: entitlements
-      repository: osduselfcpldbcpngycr.azurecr.io/entitlements
+      repository: osduselfcplcjfjprvcr.azurecr.io/entitlements
       path: /api/entitlements/v2/*
       probe:
         path: /api/entitlements/v2/_ah/readiness_check
@@ -50,7 +50,7 @@ spec:
       - name: azure_istioauth_enabled
         value: "true"
       - name: azure_activedirectory_AppIdUri
-        value: "api://c268ca47-1767-426b-81ba-dbd3443a9f6f"
+        value: "api://3c836fe6-c422-4dde-b8ea-de95c23c98d6"
       - name: azure_paas_podIdentity_isEnabled
         value: "false"
       - name: KEYVAULT_URI
