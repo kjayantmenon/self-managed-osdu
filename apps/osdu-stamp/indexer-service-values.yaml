@@ -7,10 +7,10 @@ metadata:
 spec:
   values:
     ingress:
-      dns: osdu-self-dplcjfdf-epug-gw.centralus.cloudapp.azure.com
+      dns: osdu-self-dplcjdej-zcob-gw.centralus.cloudapp.azure.com
     configuration:
     - service: indexer
-      repository: osduselfcplcjfjprvcr.azurecr.io/indexer
+      repository: osduselfcplcjd94ldcr.azurecr.io/indexer
       path: /api/indexer/v2/*
       probe:
         path: /api/indexer/v2/swagger-ui.html
@@ -65,7 +65,7 @@ spec:
       - name: azure_istioauth_enabled
         value: "true"
       - name: azure_activedirectory_AppIdUri
-        value: "api://3c836fe6-c422-4dde-b8ea-de95c23c98d6"
+        value: "api://9ccfdc2c-0d44-41e8-832c-2282c07412e6"
       - name: azure_paas_podIdentity_isEnabled
         value: "false"
       - name: KEYVAULT_URI
