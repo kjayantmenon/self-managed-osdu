@@ -77,7 +77,7 @@ jobs:
         with:
           azcliversion: ${{ env.CLI_VERSION }}
           inlineScript: |
-            GROUP=$(az group list --query "[?contains(name, 'cpl${{ secrets.RAND }}')].name" -otsv)
+            GROUP=$(az group list --query "[?contains(name, 'cpl')].name" -otsv)
             ENV_VAULT=$(az keyvault list --resource-group $GROUP --query [].name -otsv)
 
             echo "GROUP=$GROUP" >> $GITHUB_ENV
@@ -85,7 +85,7 @@ jobs:
 
       - name: Configure .env
         run: |
-          DP_GROUP=$(az group list --query "[?contains(name, 'dpl${{ secrets.RAND }}')].name" -otsv |grep -v MC)
+          DP_GROUP=$(az group list --query "[?contains(name, 'dpl')].name" -otsv |grep -v MC)
 
           cat > .env << EOF
           DATA_PARTITION=${{ env.PARTITION_NAME }}
@@ -114,10 +114,10 @@ jobs:
         with:
           azcliversion: ${{ env.CLI_VERSION }}
           inlineScript: |
-            GROUP=$(az group list --query "[?contains(name, 'cpl${{ secrets.RAND }}')].name" -otsv)
+            GROUP=$(az group list --query "[?contains(name, 'cpl')].name" -otsv)
             ENV_VAULT=$(az keyvault list --resource-group $GROUP --query [].name -otsv)
             REGISTRY=$(az acr list -g $GROUP --query [0].loginServer -otsv)
-            DP_GROUP=$(az group list --query "[?contains(name, 'dpl${{ secrets.RAND }}')].name" -otsv |grep -v MC)
+            DP_GROUP=$(az group list --query "[?contains(name, 'dpl')].name" -otsv |grep -v MC)
             DNS_HOST=$(az network public-ip list --resource-group $DP_GROUP --query [].dnsSettings.fqdn -otsv)
             AZURE_TENANT_ID=$(az account show --query tenantId -otsv)
             AZURE_CLIENT_ID=$(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/app-dev-sp-username --query value -otsv)
