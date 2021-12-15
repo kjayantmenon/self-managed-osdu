@@ -7,10 +7,10 @@ metadata:
 spec:
   values:
     ingress:
-      dns: osdu-self-dplcjdej-zcob-gw.centralus.cloudapp.azure.com
+      dns: osdu-self-dpldbcfa-gnhb-gw.centralus.cloudapp.azure.com
     configuration:
     - service: legal
-      repository: osduselfcplcjd94ldcr.azurecr.io/legal
+      repository: osduselfcpldbc8dy5cr.azurecr.io/legal
       path: /api/legal/v1/*
       probe:
         path: /actuator/health
@@ -64,7 +64,7 @@ spec:
       - name: SPRING_CONFIG_NAME
         value: "common,application"
       - name: azure_activedirectory_AppIdUri
-        value: "api://9ccfdc2c-0d44-41e8-832c-2282c07412e6"
+        value: "api://e324a2bd-6836-46e6-a102-bca1c146645b"
       - name: azure_paas_podIdentity_isEnabled
         value: "false"
       - name: KEYVAULT_URI

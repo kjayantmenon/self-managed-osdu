@@ -7,10 +7,10 @@ metadata:
 spec:
   values:
     ingress:
-      dns: osdu-self-dplcjdej-zcob-gw.centralus.cloudapp.azure.com
+      dns: osdu-self-dpldbcfa-gnhb-gw.centralus.cloudapp.azure.com
     configuration:
     - service: workflow
-      repository: osduselfcplcjd94ldcr.azurecr.io/workflow
+      repository: osduselfcpldbc8dy5cr.azurecr.io/workflow
       path: /api/workflow/*
       probe:
         path: /api/workflow/swagger-ui.html
@@ -56,7 +56,7 @@ spec:
       - name: azure_istioauth_enabled
         value: "true"
       - name: azure_activedirectory_AppIdUri
-        value: "api://9ccfdc2c-0d44-41e8-832c-2282c07412e6"
+        value: "api://e324a2bd-6836-46e6-a102-bca1c146645b"
       - name: azure_paas_podIdentity_isEnabled
         value: "false"
       - name: dp_airflow_for_system_dag
