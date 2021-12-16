@@ -134,7 +134,7 @@ jobs:
   validate-ingest-reference-master-data:
     name: validate-ingest-reference-master-data
     runs-on: ubuntu-latest
-    needs: [generate-authcode,update-entitlements,create-legal-tag,setup-environment-variables]
+    needs:  ingest-reference-master-data
 
     steps:
       - uses: actions/checkout@v2
