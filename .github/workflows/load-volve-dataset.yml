@@ -1,5 +1,5 @@
 
-name: '7.2. Load Volve Dataset'
+name: '7.2 Load Volve Dataset'
 
 on:
   workflow_dispatch:
