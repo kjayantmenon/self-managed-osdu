@@ -17,7 +17,7 @@ env:
 
 jobs:
 
-  generate-manifest:
+  generate-manifests:
     name: generate-manifests
     runs-on: ubuntu-latest
 
