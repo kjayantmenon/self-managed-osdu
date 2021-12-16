@@ -1,4 +1,4 @@
-name: '7.1 Load TNO Dataset - Azure/M8'
+name: '7.1 Load TNO Dataset (Azure/M8)'
 
 on:
   workflow_dispatch:
