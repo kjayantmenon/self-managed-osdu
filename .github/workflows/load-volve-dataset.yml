@@ -18,80 +18,11 @@ env:
 
 jobs:
 
-  control-plane:
-    name: Provision - ControlPlane
-    env:
-      TEMPLATE: /osdu-azure/templates/osdu-r3-mvp/central_resources
-    runs-on: ubuntu-latest
-    steps:
-
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Azure Login
-        uses: Azure/login@v1.1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Build Docker Image
-        uses: docker/build-push-action@v2
-        with:
-          push: false
-          build-args: WORKING_DIRECTORY=${{ env.TEMPLATE }}
-          tags: self-managed-osdu:${{ env.IMAGE_TAG }}
-          outputs: type=docker,dest=/tmp/self-managed-osdu.tar
-
-      - name: Load Docker Image
-        run: docker load --input /tmp/self-managed-osdu.tar
-
-      - name: Retrieve Environment Settings
-        uses: Azure/cli@1.0.4
-        with:
-          azcliversion: ${{ env.CLI_VERSION }}
-          inlineScript: |
-            VAULT=$(az keyvault list --resource-group ${{ secrets.BUILDER_GROUP }} --query [].name -otsv)
-            STORAGE=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/storage --query value -otsv)
-
-            cat > $GITHUB_WORKSPACE/.env << EOF
-            ## These variables support AzureRM Backend Storage State
-            ARM_TENANT_ID=$(az account show --query homeTenantId -otsv)
-            ARM_SUBSCRIPTION_ID=$(az account show --query id -otsv)
-            ARM_CLIENT_ID=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/terraform-id --query value -otsv)
-            ARM_CLIENT_SECRET=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/terraform-secret --query value -otsv)
-            ARM_ACCESS_KEY=$(az storage account keys list --resource-group ${{ secrets.BUILDER_GROUP }} --account-name $STORAGE --query '[0].value' -o tsv)
-            TF_VAR_remote_state_account=$STORAGE
-            TF_VAR_remote_state_container=remote-state-container
-
-            # Global Region Pair Location
-            TF_VAR_cosmosdb_replica_location=$(az account list-locations --query "[?name == '${{ secrets.AZURE_LOCATION }}'].metadata.pairedRegion[0].name" -otsv)
-
-            # Central Resources
-            TF_VAR_principal_appId=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/client-id --query value -otsv)
-            TF_VAR_principal_password=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/client-secret --query value -otsv)
-            TF_VAR_principal_objectId=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/client-oid --query value -otsv)
-            TF_VAR_aad_client_id=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/application-id --query value -otsv)
-            EOF
-
-      - name: Deploy Resources
-        run: |
-          docker run --rm --env-file $GITHUB_WORKSPACE/.env \
-            --env TF_VAR_workspace=${{ env.CONTROLPLANE_WORKSPACE }} \
-            --env TF_VAR_resource_group_location="${{ secrets.AZURE_LOCATION }}" \
-            --env TF_VAR_principal_name=$(echo '${{ secrets.OSDU_CREDENTIALS }}' | jq -r ".displayName") \
-            self-managed-osdu:${{ env.IMAGE_TAG }}
-
-          rm $GITHUB_WORKSPACE/.env
-        shell: bash
-
-  data-plane:
-    name: Provision - DataPlane
+  validate-workflow-service:
+    name: Validate - Workflow Service
     env:
       TEMPLATE: /osdu-azure/templates/osdu-r3-mvp/service_resources
     runs-on: ubuntu-latest
-    needs: control-plane
     steps:
       - uses: actions/checkout@v2
       - uses: Azure/login@v1.1
@@ -147,139 +78,12 @@ jobs:
 
           rm $GITHUB_WORKSPACE/.env
         shell: bash
-
-  partition:
-    name: Provision - Partition
-    env:
-      TEMPLATE: /osdu-azure/templates/osdu-r3-mvp/data_partition
-      ELASTIC_USERNAME: elastic
-    runs-on: ubuntu-latest
-    needs: data-plane
-    steps:
-      - uses: actions/checkout@v2
-      - uses: Azure/login@v1.1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - uses: docker/setup-buildx-action@v1
-
-      - name: Build Docker Image
-        uses: docker/build-push-action@v2
-        with:
-          push: false
-          build-args: WORKING_DIRECTORY=${{ env.TEMPLATE }}
-          tags: self-managed-osdu:${{ env.IMAGE_TAG }}
-          outputs: type=docker,dest=/tmp/self-managed-osdu.tar
-
-      - name: Load Docker Image
-        run: docker load --input /tmp/self-managed-osdu.tar
-
-      - name: Retrieve Environment Settings
-        uses: Azure/cli@1.0.4
-        with:
-          azcliversion: ${{ env.CLI_VERSION }}
-          inlineScript: |
-            VAULT=$(az keyvault list --resource-group ${{ secrets.BUILDER_GROUP }} --query [].name -otsv)
-            STORAGE=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/storage --query value -otsv)
-
-            cat > $GITHUB_WORKSPACE/.env << EOF
-            ## These variables support AzureRM Backend Storage State
-            ARM_TENANT_ID=$(az account show --query homeTenantId -otsv)
-            ARM_SUBSCRIPTION_ID=$(az account show --query id -otsv)
-            ARM_CLIENT_ID=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/terraform-id --query value -otsv)
-            ARM_CLIENT_SECRET=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/terraform-secret --query value -otsv)
-            ARM_ACCESS_KEY=$(az storage account keys list --resource-group ${{ secrets.BUILDER_GROUP }} --account-name $STORAGE --query '[0].value' -o tsv)
-            TF_VAR_remote_state_account=$STORAGE
-            TF_VAR_remote_state_container=remote-state-container
-
-            # Global Region Pair Location
-            TF_VAR_cosmosdb_replica_location=$(az account list-locations --query "[?name == '${{ secrets.AZURE_LOCATION }}'].metadata.pairedRegion[0].name" -otsv)
-            EOF
-
-      - name: Deploy Azure Resources
-        run: |
-          docker run --rm --env-file $GITHUB_WORKSPACE/.env \
-            --env TF_VAR_workspace=${{ env.PARTITION_WORKSPACE }} \
-            --env TF_VAR_resource_group_location="${{ secrets.AZURE_LOCATION }}" \
-            --env TF_VAR_central_resources_workspace_name=${{ env.CONTROLPLANE_WORKSPACE }}  \
-            --env TF_VAR_service_resources_workspace_name=${{ env.DATAPLANE_WORKSPACE }}  \
-            --env TF_VAR_elasticsearch_endpoint=${{ secrets.ELASTIC_ENDPOINT }} \
-            --env TF_VAR_elasticsearch_username=${{ env.ELASTIC_USERNAME }} \
-            --env TF_VAR_elasticsearch_password=${{ secrets.ELASTIC_PASSWORD }} \
-            self-managed-osdu:${{ env.IMAGE_TAG }}
-
-          rm $GITHUB_WORKSPACE/.env
-        shell: bash
-
-  dashboard:
-    name: Provision - Dashboard
-    env:
-      TEMPLATE: /osdu-azure/templates/osdu-r3-mvp/monitoring_resources
-    runs-on: ubuntu-latest
-    needs: partition
-    steps:
-
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Azure Login
-        uses: Azure/login@v1.1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Build Docker Image
-        uses: docker/build-push-action@v2
-        with:
-          push: false
-          build-args: WORKING_DIRECTORY=${{ env.TEMPLATE }}
-          tags: self-managed-osdu:${{ env.IMAGE_TAG }}
-          outputs: type=docker,dest=/tmp/self-managed-osdu.tar
-
-      - name: Load Docker Image
-        run: docker load --input /tmp/self-managed-osdu.tar
-
-      - name: Retrieve Environment Settings
-        uses: Azure/cli@1.0.4
-        with:
-          azcliversion: ${{ env.CLI_VERSION }}
-          inlineScript: |
-            VAULT=$(az keyvault list --resource-group ${{ secrets.BUILDER_GROUP }} --query [].name -otsv)
-            STORAGE=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/storage --query value -otsv)
-
-            cat > $GITHUB_WORKSPACE/.env << EOF
-            ## These variables support AzureRM Backend Storage State
-            ARM_TENANT_ID=$(az account show --query homeTenantId -otsv)
-            ARM_SUBSCRIPTION_ID=$(az account show --query id -otsv)
-            ARM_CLIENT_ID=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/terraform-id --query value -otsv)
-            ARM_CLIENT_SECRET=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/terraform-secret --query value -otsv)
-            ARM_ACCESS_KEY=$(az storage account keys list --resource-group ${{ secrets.BUILDER_GROUP }} --account-name $STORAGE --query '[0].value' -o tsv)
-            TF_VAR_remote_state_account=$STORAGE
-            TF_VAR_remote_state_container=remote-state-container
-
-            # Monitoring Resources
-
-
-            EOF
-
-      - name: Deploy Resources
-        run: |
-          docker run --rm --env-file $GITHUB_WORKSPACE/.env \
-            --env TF_VAR_workspace=${{ env.DASHBOARD_WORKSPACE }} \
-            --env TF_VAR_resource_group_location="${{ secrets.AZURE_LOCATION }}" \
-            --env TF_VAR_central_resources_workspace_name=${{ env.CONTROLPLANE_WORKSPACE }} \
-            --env TF_VAR_service_resources_workspace_name=${{ env.DATAPLANE_WORKSPACE }} \
-            --env TF_VAR_data_partition_resources_workspace_name=${{ env.PARTITION_WORKSPACE }} \
-            self-managed-osdu:${{ env.IMAGE_TAG }}
-
-          rm $GITHUB_WORKSPACE/.env
-        shell: bash
+ 
 
   fileshare-data:
     name: Load Data - File Shares
     runs-on: ubuntu-latest
-    needs: partition
+    needs:  validate-workflow-service
     steps:
       - uses: Azure/login@v1.1
         with:
@@ -422,9 +226,9 @@ jobs:
               --pattern "*.py"
 
   cosmos-data:
-    name: Load Data - TenantInfo
+    name: Load Data - Reference Data
     runs-on: ubuntu-latest
-    needs: partition
+    needs: fileshare-data
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -452,7 +256,7 @@ jobs:
   table-data:
     name: Load Data - PartitionInfo
     runs-on: ubuntu-latest
-    needs: data-plane
+    needs: fileshare-data
     steps:
       - uses: Azure/login@v1.1
         with:
@@ -599,9 +403,9 @@ jobs:
                 --entity PartitionKey=$PARTITION_NAME RowKey=eventgrid-gsmtopic sensitive=true value=$PARTITION_NAME-eventgrid-statuschangedtopic
 
   image-data:
-    name: Load ACR - Images
+    name: Load Data - Master Data
     runs-on: ubuntu-latest
-    needs: data-plane
+    needs: fileshare-data
     steps:
       - uses: actions/checkout@v2
       - uses: Azure/login@v1.1
@@ -841,9 +645,9 @@ jobs:
             az acr import --name $REGISTRY --source msosdu.azurecr.io/airflow-function:1.0.0 --image airflow-function:1.0.0 --force --no-wait
 
   env-data:
-    name: Load KV - Settings
+    name: Load Data - WPC
     runs-on: ubuntu-latest
-    needs: partition
+    needs: fileshare-data
     steps:
       - uses: Azure/login@v1.1
         with:
