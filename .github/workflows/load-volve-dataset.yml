@@ -1,0 +1,875 @@
+
+name: '7.2. Load Volve Dataset'
+
+on:
+  workflow_dispatch:
+
+env:
+  CLI_VERSION: 2.30.0
+
+  CONTROLPLANE_WORKSPACE: "cpl-${{ secrets.RAND }}"
+  DATAPLANE_WORKSPACE: "dpl-${{ secrets.RAND }}"
+  PARTITION_WORKSPACE: "prt-${{ secrets.RAND }}"
+  DASHBOARD_WORKSPACE: "dash-${{ secrets.RAND }}"
+
+  OSDU_VERSION: 0.11.0
+  PARTITION_NAME: opendes
+  IMAGE_TAG: latest
+
+jobs:
+
+  control-plane:
+    name: Provision - ControlPlane
+    env:
+      TEMPLATE: /osdu-azure/templates/osdu-r3-mvp/central_resources
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: Azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          build-args: WORKING_DIRECTORY=${{ env.TEMPLATE }}
+          tags: self-managed-osdu:${{ env.IMAGE_TAG }}
+          outputs: type=docker,dest=/tmp/self-managed-osdu.tar
+
+      - name: Load Docker Image
+        run: docker load --input /tmp/self-managed-osdu.tar
+
+      - name: Retrieve Environment Settings
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.CLI_VERSION }}
+          inlineScript: |
+            VAULT=$(az keyvault list --resource-group ${{ secrets.BUILDER_GROUP }} --query [].name -otsv)
+            STORAGE=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/storage --query value -otsv)
+
+            cat > $GITHUB_WORKSPACE/.env << EOF
+            ## These variables support AzureRM Backend Storage State
+            ARM_TENANT_ID=$(az account show --query homeTenantId -otsv)
+            ARM_SUBSCRIPTION_ID=$(az account show --query id -otsv)
+            ARM_CLIENT_ID=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/terraform-id --query value -otsv)
+            ARM_CLIENT_SECRET=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/terraform-secret --query value -otsv)
+            ARM_ACCESS_KEY=$(az storage account keys list --resource-group ${{ secrets.BUILDER_GROUP }} --account-name $STORAGE --query '[0].value' -o tsv)
+            TF_VAR_remote_state_account=$STORAGE
+            TF_VAR_remote_state_container=remote-state-container
+
+            # Global Region Pair Location
+            TF_VAR_cosmosdb_replica_location=$(az account list-locations --query "[?name == '${{ secrets.AZURE_LOCATION }}'].metadata.pairedRegion[0].name" -otsv)
+
+            # Central Resources
+            TF_VAR_principal_appId=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/client-id --query value -otsv)
+            TF_VAR_principal_password=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/client-secret --query value -otsv)
+            TF_VAR_principal_objectId=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/client-oid --query value -otsv)
+            TF_VAR_aad_client_id=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/application-id --query value -otsv)
+            EOF
+
+      - name: Deploy Resources
+        run: |
+          docker run --rm --env-file $GITHUB_WORKSPACE/.env \
+            --env TF_VAR_workspace=${{ env.CONTROLPLANE_WORKSPACE }} \
+            --env TF_VAR_resource_group_location="${{ secrets.AZURE_LOCATION }}" \
+            --env TF_VAR_principal_name=$(echo '${{ secrets.OSDU_CREDENTIALS }}' | jq -r ".displayName") \
+            self-managed-osdu:${{ env.IMAGE_TAG }}
+
+          rm $GITHUB_WORKSPACE/.env
+        shell: bash
+
+  data-plane:
+    name: Provision - DataPlane
+    env:
+      TEMPLATE: /osdu-azure/templates/osdu-r3-mvp/service_resources
+    runs-on: ubuntu-latest
+    needs: control-plane
+    steps:
+      - uses: actions/checkout@v2
+      - uses: Azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - uses: docker/setup-buildx-action@v1
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          build-args: |
+            WORKING_DIRECTORY=${{ env.TEMPLATE }}
+            SSH_PUBLIC_KEY=${{ secrets.SSH_PUBLIC_KEY }}
+          tags: self-managed-osdu:${{ env.IMAGE_TAG }}
+          outputs: type=docker,dest=/tmp/self-managed-osdu.tar
+
+      - name: Load Docker Image
+        run: docker load --input /tmp/self-managed-osdu.tar
+
+      - name: Retrieve Environment Settings
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.CLI_VERSION }}
+          inlineScript: |
+            VAULT=$(az keyvault list --resource-group ${{ secrets.BUILDER_GROUP }} --query [].name -otsv)
+            STORAGE=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/storage --query value -otsv)
+
+            cat > $GITHUB_WORKSPACE/.env << EOF
+            ## These variables support AzureRM Backend Storage State
+            ARM_TENANT_ID=$(az account show --query homeTenantId -otsv)
+            ARM_SUBSCRIPTION_ID=$(az account show --query id -otsv)
+            ARM_CLIENT_ID=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/terraform-id --query value -otsv)
+            ARM_CLIENT_SECRET=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/terraform-secret --query value -otsv)
+            ARM_ACCESS_KEY=$(az storage account keys list --resource-group ${{ secrets.BUILDER_GROUP }} --account-name $STORAGE --query '[0].value' -o tsv)
+            TF_VAR_remote_state_account=$STORAGE
+            TF_VAR_remote_state_container=remote-state-container
+
+            # Global Region Pair Location
+            TF_VAR_cosmosdb_replica_location=$(az account list-locations --query "[?name == '${{ secrets.AZURE_LOCATION }}'].metadata.pairedRegion[0].name" -otsv)
+            EOF
+
+      - name: Deploy Resources
+        run: |
+          docker run --rm --env-file $GITHUB_WORKSPACE/.env \
+            --env TF_VAR_workspace=${{ env.DATAPLANE_WORKSPACE }} \
+            --env TF_VAR_resource_group_location="${{ secrets.AZURE_LOCATION }}" \
+            --env TF_VAR_gitops_ssh_url=git@github.com/$GITHUB_REPOSITORY.git \
+            --env TF_VAR_central_resources_workspace_name=${{ env.CONTROLPLANE_WORKSPACE }} \
+            --env TF_VAR_ssh_public_key_file=/osdu-azure/.ssh/id_rsa.pub \
+            --env TF_VAR_gitops_ssh_key_file=/osdu-azure/.ssh/id_rsa \
+            self-managed-osdu:${{ env.IMAGE_TAG }}
+
+          rm $GITHUB_WORKSPACE/.env
+        shell: bash
+
+  partition:
+    name: Provision - Partition
+    env:
+      TEMPLATE: /osdu-azure/templates/osdu-r3-mvp/data_partition
+      ELASTIC_USERNAME: elastic
+    runs-on: ubuntu-latest
+    needs: data-plane
+    steps:
+      - uses: actions/checkout@v2
+      - uses: Azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - uses: docker/setup-buildx-action@v1
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          build-args: WORKING_DIRECTORY=${{ env.TEMPLATE }}
+          tags: self-managed-osdu:${{ env.IMAGE_TAG }}
+          outputs: type=docker,dest=/tmp/self-managed-osdu.tar
+
+      - name: Load Docker Image
+        run: docker load --input /tmp/self-managed-osdu.tar
+
+      - name: Retrieve Environment Settings
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.CLI_VERSION }}
+          inlineScript: |
+            VAULT=$(az keyvault list --resource-group ${{ secrets.BUILDER_GROUP }} --query [].name -otsv)
+            STORAGE=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/storage --query value -otsv)
+
+            cat > $GITHUB_WORKSPACE/.env << EOF
+            ## These variables support AzureRM Backend Storage State
+            ARM_TENANT_ID=$(az account show --query homeTenantId -otsv)
+            ARM_SUBSCRIPTION_ID=$(az account show --query id -otsv)
+            ARM_CLIENT_ID=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/terraform-id --query value -otsv)
+            ARM_CLIENT_SECRET=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/terraform-secret --query value -otsv)
+            ARM_ACCESS_KEY=$(az storage account keys list --resource-group ${{ secrets.BUILDER_GROUP }} --account-name $STORAGE --query '[0].value' -o tsv)
+            TF_VAR_remote_state_account=$STORAGE
+            TF_VAR_remote_state_container=remote-state-container
+
+            # Global Region Pair Location
+            TF_VAR_cosmosdb_replica_location=$(az account list-locations --query "[?name == '${{ secrets.AZURE_LOCATION }}'].metadata.pairedRegion[0].name" -otsv)
+            EOF
+
+      - name: Deploy Azure Resources
+        run: |
+          docker run --rm --env-file $GITHUB_WORKSPACE/.env \
+            --env TF_VAR_workspace=${{ env.PARTITION_WORKSPACE }} \
+            --env TF_VAR_resource_group_location="${{ secrets.AZURE_LOCATION }}" \
+            --env TF_VAR_central_resources_workspace_name=${{ env.CONTROLPLANE_WORKSPACE }}  \
+            --env TF_VAR_service_resources_workspace_name=${{ env.DATAPLANE_WORKSPACE }}  \
+            --env TF_VAR_elasticsearch_endpoint=${{ secrets.ELASTIC_ENDPOINT }} \
+            --env TF_VAR_elasticsearch_username=${{ env.ELASTIC_USERNAME }} \
+            --env TF_VAR_elasticsearch_password=${{ secrets.ELASTIC_PASSWORD }} \
+            self-managed-osdu:${{ env.IMAGE_TAG }}
+
+          rm $GITHUB_WORKSPACE/.env
+        shell: bash
+
+  dashboard:
+    name: Provision - Dashboard
+    env:
+      TEMPLATE: /osdu-azure/templates/osdu-r3-mvp/monitoring_resources
+    runs-on: ubuntu-latest
+    needs: partition
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: Azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v2
+        with:
+          push: false
+          build-args: WORKING_DIRECTORY=${{ env.TEMPLATE }}
+          tags: self-managed-osdu:${{ env.IMAGE_TAG }}
+          outputs: type=docker,dest=/tmp/self-managed-osdu.tar
+
+      - name: Load Docker Image
+        run: docker load --input /tmp/self-managed-osdu.tar
+
+      - name: Retrieve Environment Settings
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.CLI_VERSION }}
+          inlineScript: |
+            VAULT=$(az keyvault list --resource-group ${{ secrets.BUILDER_GROUP }} --query [].name -otsv)
+            STORAGE=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/storage --query value -otsv)
+
+            cat > $GITHUB_WORKSPACE/.env << EOF
+            ## These variables support AzureRM Backend Storage State
+            ARM_TENANT_ID=$(az account show --query homeTenantId -otsv)
+            ARM_SUBSCRIPTION_ID=$(az account show --query id -otsv)
+            ARM_CLIENT_ID=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/terraform-id --query value -otsv)
+            ARM_CLIENT_SECRET=$(az keyvault secret show --id https://$VAULT.vault.azure.net/secrets/terraform-secret --query value -otsv)
+            ARM_ACCESS_KEY=$(az storage account keys list --resource-group ${{ secrets.BUILDER_GROUP }} --account-name $STORAGE --query '[0].value' -o tsv)
+            TF_VAR_remote_state_account=$STORAGE
+            TF_VAR_remote_state_container=remote-state-container
+
+            # Monitoring Resources
+
+
+            EOF
+
+      - name: Deploy Resources
+        run: |
+          docker run --rm --env-file $GITHUB_WORKSPACE/.env \
+            --env TF_VAR_workspace=${{ env.DASHBOARD_WORKSPACE }} \
+            --env TF_VAR_resource_group_location="${{ secrets.AZURE_LOCATION }}" \
+            --env TF_VAR_central_resources_workspace_name=${{ env.CONTROLPLANE_WORKSPACE }} \
+            --env TF_VAR_service_resources_workspace_name=${{ env.DATAPLANE_WORKSPACE }} \
+            --env TF_VAR_data_partition_resources_workspace_name=${{ env.PARTITION_WORKSPACE }} \
+            self-managed-osdu:${{ env.IMAGE_TAG }}
+
+          rm $GITHUB_WORKSPACE/.env
+        shell: bash
+
+  fileshare-data:
+    name: Load Data - File Shares
+    runs-on: ubuntu-latest
+    needs: partition
+    steps:
+      - uses: Azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Upload CRS Catalog
+        env:
+          SERVICE: crs-catalog-service
+          FILE: crs_catalog_v2.json
+          FILE_SHARE: crs
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.CLI_VERSION }}
+          inlineScript: |
+            mkdir ${{ env.RUNNER_TEMP }}/results
+            curl -sSL -o ${{ env.RUNNER_TEMP }}/download.gz https://community.opengroup.org/osdu/platform/system/reference/${{ env.SERVICE }}/-/archive/v${{ env.OSDU_VERSION }}/${{ env.SERVICE}}-v${{ env.OSDU_VERSION }}.tar.gz
+            tar -xzvf ${{ env.RUNNER_TEMP }}/download.gz -C ${{ env.RUNNER_TEMP }}/results --strip-components=2 ${{ env.SERVICE }}-v${{ env.OSDU_VERSION }}/data/${{ env.FILE }}
+
+            GROUP=$(az group list --query "[?contains(name, 'cpl${{ secrets.RAND }}')].name" -otsv)
+            ENV_VAULT=$(az keyvault list --resource-group $GROUP --query [].name -otsv)
+
+            az storage file upload \
+              --account-name $(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/airflow-storage --query value -otsv) \
+              --account-key $(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/airflow-storage-key --query value -otsv) \
+              --share-name ${{ env.FILE_SHARE }} \
+              --source ${{ env.RUNNER_TEMP }}/results/${{ env.FILE }}
+
+      - name: Upload Unit Catalog
+        env:
+          SERVICE: unit-service
+          FILE: unit_catalog_v2.json
+          FILE_SHARE: unit
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.CLI_VERSION }}
+          inlineScript: |
+            mkdir ${{ env.RUNNER_TEMP }}/results
+            curl -sSL -o ${{ env.RUNNER_TEMP }}/download.gz https://community.opengroup.org/osdu/platform/system/reference/${{ env.SERVICE }}/-/archive/v${{ env.OSDU_VERSION }}/${{ env.SERVICE }}-v${{ env.OSDU_VERSION }}.tar.gz
+            tar -xzvf ${{ env.RUNNER_TEMP }}/download.gz -C ${{ env.RUNNER_TEMP }}/results --strip-components=2 ${{ env.SERVICE }}-v${{ env.OSDU_VERSION }}/data/${{ env.FILE }}
+
+            GROUP=$(az group list --query "[?contains(name, 'cpl${{ secrets.RAND }}')].name" -otsv)
+            ENV_VAULT=$(az keyvault list --resource-group $GROUP --query [].name -otsv)
+
+            az storage file upload \
+              --account-name $(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/airflow-storage --query value -otsv) \
+              --account-key $(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/airflow-storage-key --query value -otsv) \
+              --share-name ${{ env.FILE_SHARE }} \
+              --source ${{ env.RUNNER_TEMP }}/results/${{ env.FILE }}
+
+      - name: Upload CRS Conversion
+        env:
+          SERVICE: crs-conversion-service
+          FOLDER: apachesis_setup
+          FILE_SHARE: crs-conversion
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.CLI_VERSION }}
+          inlineScript: |
+            mkdir ${{ env.RUNNER_TEMP }}/results
+            curl -sSL -o ${{ env.RUNNER_TEMP }}/download.tar.gz https://community.opengroup.org/osdu/platform/system/reference/${{ env.SERVICE }}/-/archive/v${{ env.OSDU_VERSION }}/${{ env.SERVICE }}-v${{ env.OSDU_VERSION }}.tar.gz
+            tar -xzvf ${{ env.RUNNER_TEMP }}/download.tar.gz -C ${{ env.RUNNER_TEMP }}/results --strip-components=1 ${{ env.SERVICE }}-v${{ env.OSDU_VERSION }}/${{ env.FOLDER }}
+
+            GROUP=$(az group list --query "[?contains(name, 'cpl${{ secrets.RAND }}')].name" -otsv)
+            ENV_VAULT=$(az keyvault list --resource-group $GROUP --query [].name -otsv)
+
+            az storage file upload-batch \
+            --account-name $(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/airflow-storage --query value -otsv) \
+            --account-key $(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/airflow-storage-key --query value -otsv) \
+            --destination ${{ env.FILE_SHARE }} \
+            --source ${{ env.RUNNER_TEMP }}/results \
+            --pattern ${{ env.FOLDER }}/**
+
+      - name: Upload Ingestion Manifest
+        env:
+          SERVICE: ingestion-dags
+          FOLDER: src/osdu_dags
+          FILE_SHARE: airflowdags
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.CLI_VERSION }}
+          inlineScript: |
+            mkdir ${{ env.RUNNER_TEMP }}/results
+            curl -sSL -o ${{ env.RUNNER_TEMP }}/download.tar.gz https://community.opengroup.org/osdu/platform/data-flow/ingestion/${{ env.SERVICE }}/-/archive/v${{ env.OSDU_VERSION }}/${{ env.SERVICE }}-v${{ env.OSDU_VERSION }}.tar.gz
+            tar -xzvf ${{ env.RUNNER_TEMP }}/download.tar.gz -C ${{ env.RUNNER_TEMP }}/results --strip-components=3 ${{ env.SERVICE }}-v${{ env.OSDU_VERSION }}/${{ env.FOLDER }}
+            cd ${{ env.RUNNER_TEMP }}/results && zip -r ../manifest-ingestion-dags.zip . && cd ..
+
+            GROUP=$(az group list --query "[?contains(name, 'cpl${{ secrets.RAND }}')].name" -otsv)
+            ENV_VAULT=$(az keyvault list --resource-group $GROUP --query [].name -otsv)
+
+            az storage file upload \
+              --account-name $(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/airflow-storage --query value -otsv) \
+              --account-key $(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/airflow-storage-key --query value -otsv) \
+              --share-name ${{ env.FILE_SHARE }} \
+              --source ${{ env.RUNNER_TEMP }}/manifest-ingestion-dags.zip
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Upload Legal Country Objects
+        env:
+          PARTITION_NAME: opendes
+          CONTAINER: legal-service-azure-configuration
+          FILE: Legal_COO.json
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.CLI_VERSION }}
+          inlineScript: |
+            GROUP=$(az group list --query "[?contains(name, 'cpl${{ secrets.RAND }}')].name" -otsv)
+            ENV_VAULT=$(az keyvault list --resource-group $GROUP --query [].name -otsv)
+
+            az storage blob upload \
+              --account-name $(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/${{ env.PARTITION_NAME }}-storage --query value -otsv) \
+              --account-key $(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/${{ env.PARTITION_NAME }}-storage-key --query value -otsv) \
+              --file $GITHUB_WORKSPACE/configuration/Legal_COO.json \
+              --container-name ${{ env.CONTAINER }} \
+              --name ${{ env.FILE }}
+
+      - name: Upload Local DAGS
+        env:
+          FILE_SHARE: airflowdags
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.CLI_VERSION }}
+          inlineScript: |
+            GROUP=$(az group list --query "[?contains(name, 'cpl${{ secrets.RAND }}')].name" -otsv)
+            ENV_VAULT=$(az keyvault list --resource-group $GROUP --query [].name -otsv)
+
+            az storage file upload-batch \
+              --account-name $(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/airflow-storage --query value -otsv) \
+              --account-key $(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/airflow-storage-key --query value -otsv) \
+              --destination ${{ env.FILE_SHARE }} \
+              --source $GITHUB_WORKSPACE/src/${{ env.FILE_SHARE }} \
+              --pattern "*.ini"
+
+            az storage file upload-batch \
+              --account-name $(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/airflow-storage --query value -otsv) \
+              --account-key $(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/airflow-storage-key --query value -otsv) \
+              --destination ${{ env.FILE_SHARE }} \
+              --source $GITHUB_WORKSPACE/src/${{ env.FILE_SHARE }} \
+              --pattern "*.py"
+
+  cosmos-data:
+    name: Load Data - TenantInfo
+    runs-on: ubuntu-latest
+    needs: partition
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip azure-cosmos
+
+      - name: Load Record
+        run: |
+          GROUP=$(az group list --query "[?contains(name, 'cpl${{ secrets.RAND }}')].name" -otsv)
+          ENV_VAULT=$(az keyvault list --resource-group $GROUP --query [].name -otsv)
+
+          export COSMOS_ENDPOINT=$(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/${PARTITION_NAME}-cosmos-endpoint --query value -otsv)
+          export COSMOS_KEY=$(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/${PARTITION_NAME}-cosmos-primary-key --query value -otsv)
+          export SERVICE_PRINCIPAL_ID=$(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/app-dev-sp-username --query value -otsv)
+          export SERVICE_PRINCIPAL_OID=$(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/app-dev-sp-id --query value -otsv)
+
+          python3 scripts/upload-data.py
+
+  table-data:
+    name: Load Data - PartitionInfo
+    runs-on: ubuntu-latest
+    needs: data-plane
+    steps:
+      - uses: Azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Upload Partition Info
+        env:
+          TABLE: PartitionInfo
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.CLI_VERSION }}
+          inlineScript: |
+            GROUP=$(az group list --query "[?contains(name, 'cpl${{ secrets.RAND }}')].name" -otsv)
+            STORAGE_NAME=$(az storage account list --resource-group $GROUP --query [].name -otsv)
+            STORAGE_KEY=$(az storage account keys list -g $GROUP -n $STORAGE_NAME --query [0].value -otsv)
+
+            EXISTS=$(az storage table exists -n $TABLE --account-name $STORAGE_NAME --account-key $STORAGE_KEY --query exists -otsv)
+            if [ "${EXISTS}" == "false" ]; then
+              az storage table create -n $TABLE --account-name $STORAGE_NAME --account-key $STORAGE_KEY
+            fi
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=opendes RowKey=id sensitive=false value=$PARTITION_NAME
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=opendes RowKey=compliance-ruleset sensitive=false value=shared
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=elastic-endpoint sensitive=true value=$PARTITION_NAME-elastic-endpoint
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=elastic-username sensitive=true value=$PARTITION_NAME-elastic-username
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=elastic-password sensitive=true value=$PARTITION_NAME-elastic-password
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=cosmos-connection sensitive=true value=$PARTITION_NAME-cosmos-connection
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=cosmos-endpoint sensitive=true value=$PARTITION_NAME-cosmos-endpoint
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=cosmos-primary-key sensitive=true value=$PARTITION_NAME-cosmos-primary-key
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=sb-connection sensitive=true value=$PARTITION_NAME-sb-connection
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=sb-namespace sensitive=true value=$PARTITION_NAME-sb-namespace
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=storage-account-name sensitive=true value=$PARTITION_NAME-storage
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=storage-account-key sensitive=true value=$PARTITION_NAME-storage-key
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=ingest-storage-account-name sensitive=true value=$PARTITION_NAME-ingest-storage
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=ingest-storage-account-key sensitive=true value=$PARTITION_NAME-ingest-storage-key
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=sdms-storage-account-name sensitive=true value=$PARTITION_NAME-sdms-storage
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=sdms-storage-account-key sensitive=true value=$PARTITION_NAME-sdms-storage-key
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=encryption-key-identifier sensitive=true value=$PARTITION_NAME-encryption-key-identifier
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=eventgrid-statuschangedtopic-accesskey sensitive=true value=$PARTITION_NAME-eventgrid-statuschangedtopic-accesskey
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=eventgrid-resourcegroup sensitive=true value=$PARTITION_NAME-eventgrid-resourcegroup
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=eventgrid-legaltagschangedtopic-accesskey sensitive=true value=$PARTITION_NAME-eventgrid-legaltagschangedtopic-accesskey
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=eventgrid-legaltagschangedtopic sensitive=true value=$PARTITION_NAME-eventgrid-legaltagschangedtopic
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=eventgrid-schemachangedtopic-accesskey sensitive=true value=$PARTITION_NAME-eventgrid-schemachangedtopic-accesskey
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=eventgrid-schemachangedtopic sensitive=true value=$PARTITION_NAME-eventgrid-schemachangedtopic
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=eventgrid-recordstopic-accesskey sensitive=true value=$PARTITION_NAME-eventgrid-recordstopic-accesskey
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=eventgrid-recordstopic sensitive=true value=$PARTITION_NAME-eventgrid-recordstopic
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=eventgrid-schemanotificationtopic-accesskey sensitive=true value=$PARTITION_NAME-eventgrid-schemachangedtopic-accesskey
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=eventgrid-schemanotificationtopic sensitive=true value=$PARTITION_NAME-eventgrid-schemachangedtopic
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=eventgrid-statuschangedtopic-accesskey sensitive=true value=$PARTITION_NAME-eventgrid-statuschangedtopic-accesskey
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=eventgrid-statuschangedtopic sensitive=true value=$PARTITION_NAME-eventgrid-statuschangedtopic
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=eventgrid-gsmtopic-accesskey sensitive=true value=$PARTITION_NAME-eventgrid-statuschangedtopic-accesskey
+
+            az storage entity insert --account-name $STORAGE_NAME --account-key $STORAGE_KEY \
+                --if-exists replace --table-name $TABLE \
+                --entity PartitionKey=$PARTITION_NAME RowKey=eventgrid-gsmtopic sensitive=true value=$PARTITION_NAME-eventgrid-statuschangedtopic
+
+  image-data:
+    name: Load ACR - Images
+    runs-on: ubuntu-latest
+    needs: data-plane
+    steps:
+      - uses: actions/checkout@v2
+      - uses: Azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Retrieve Env Variables
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.CLI_VERSION }}
+          inlineScript: |
+            GROUP=$(az group list --query "[?contains(name, 'cpl${{ secrets.RAND }}')].name" -otsv)
+            ENV_VAULT=$(az keyvault list --resource-group $GROUP --query [].name -otsv)
+            CLIENT_ID=$(az keyvault secret show --id https://${ENV_VAULT}.vault.azure.net/secrets/aad-client-id --query value -otsv)
+            TENANT_ID=$(az account show --query tenantId -otsv)
+            DP_GROUP=$(az group list --query "[?contains(name, 'dpl${{ secrets.RAND }}')].name" -otsv |grep -v MC)
+            DNS_HOST=$(az network public-ip list --resource-group $DP_GROUP --query [].dnsSettings.fqdn -otsv)
+
+            echo "GROUP=$GROUP" >> $GITHUB_ENV
+            echo "CLIENT_ID=$CLIENT_ID" >> $GITHUB_ENV
+            echo "TENANT_ID=$TENANT_ID" >> $GITHUB_ENV
+            echo "DNS_HOST=$DNS_HOST" >> $GITHUB_ENV
+
+      - name: Custom Login HTML Page
+        run: |
+          cat > src/auth_token/index.html << EOF
+          <!DOCTYPE html>
+          <html lang="en">
+          <!-- python3 -m http.server 8080 -->
+
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            <meta http-equiv="x-ua-compatible" content="ie=edge">
+            <title>OAuth Login</title>
+            <!-- Font Awesome -->
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+            <!-- Bootstrap core CSS -->
+            <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+            <style type="text/css">
+              textarea {
+                margin-bottom: 5px;
+              }
+            </style>
+          </head>
+
+          <body>
+
+            <div id="app">
+
+              <form id="oauth-form" @submit.prevent="getToken" class="text-center border border-light p-5" action="#!">
+
+                <p class="h2 mb-4">Microsoft Identity Platform (v2.0)</p>
+
+                <div class="form-group">
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label class="float-left" for="clientId">ClientId</label>
+                      <input type="text" class="form-control" id="clientId" v-model="clientId">
+                    </div>
+                    <div class="form-group col-md-6">
+                      <label class="float-left" for="tenantId">TenantId</label>
+                      <input type="text" class="form-control" id="tenantId" v-model="tenantId">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="col-md-6 mb-3">
+                      <label class="float-left" for="responseType">RedirectUrl</label>
+                      <input type="text" class="form-control" id="redirectUrl" v-model="redirectUrl">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      <label class="float-left" for="responseType">ResponseType</label>
+                      <input type="text" class="form-control" id="responseType" v-model="responseType">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      <label class="float-left" for="responseMode">ResponseMode</label>
+                      <input type="text" class="form-control" id="responseMode" v-model="responseMode">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="col-md-12 mb-3">
+                      <label class="float-left" for="scope">Scope</label>
+                      <input type="text" class="form-control" id="scope" v-model="scope">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="col-md-12 mb-1">
+                      <a :href="signOutUrl" class="btn btn-link float-left" v-if="authorizationCode" class="col-2">Logout</a>
+                      <a :href="authorizeUrl" class="btn btn-primary float-right" class="col-2">Authorize</a>
+                    </div>
+                  </div>
+
+                </div>
+                <hr />
+
+                <div class="form-group shadow-textarea">
+                  <div class="form-row">
+                    <div class="col-md-4 mb-4">
+                      <label class="float-left" for="accessToken">ResponseType: code</label>
+                      <textarea id="authorizationCode" v-model="authorizationCode" class="form-control z-depth-1"
+                        rows="10"></textarea>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                      <label class="float-left" for="accessToken">ResponseType: token</label>
+                      <textarea id="accessToken" v-model="accessToken" class="form-control z-depth-1" rows="10"></textarea>
+                      <a @click="decodeAccess()" class="btn btn-info btn-sm float-right" v-if="accessToken">Decode</a>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                      <label class="float-left" for="idToken">ResponseType: id_token</label>
+                      <textarea id="idToken" v-model="idToken" class="form-control z-depth-1" rows="10"></textarea>
+                      <a @click="decodeId()" class="btn btn-info btn-sm float-right" v-if="idToken">Decode</a>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <!-- SCRIPTS -->
+            <!-- JQuery -->
+            <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+            <!-- Bootstrap core JavaScript -->
+            <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+            <!-- Vue JavaScript -->
+            <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+            <script>
+
+              var app = new Vue({
+                el: '#oauth-form',
+                data: {
+                  tenantId: '${TENANT_ID}',
+                  clientId: '${CLIENT_ID}',
+                  redirectUrl: 'https://$DNS_HOST/login/',
+                  responseType: 'code',
+                  responseMode: 'fragment',
+                  scope: '${CLIENT_ID}/.default openid profile offline_access',
+                  authorizationCode: null,
+                  accessToken: null,
+                  idToken: null
+                },
+                computed: {
+                  authorizeUrl: function () {
+                    return "https://login.microsoftonline.com/" + this.tenantId +
+                      "/oauth2/v2.0/authorize?" +
+                      "client_id=" + this.clientId +
+                      "&response_type=" + this.responseType +
+                      "&redirect_uri=" + this.redirectUrl +
+                      "&response_mode=" + this.responseMode +
+                      "&scope=" + this.scope +
+                      "&state=12345" +
+                      "&nonce=dummy123";
+                  },
+                  decodeId: function () {
+                    decodeUrl = "https://jwt.ms/#id_token=" + this.idToken;
+                    window.open(decodeUrl, "_blank");
+                  },
+                  decodeAccess: function () {
+                    decodeUrl = "https://jwt.ms/#id_token=" + this.accessToken;
+                    window.open(decodeUrl, "_blank");
+                  },
+                  signOutUrl: function () {
+                    return "https://login.microsoftonline.com/" + this.clientId + "/oauth2/logout";
+                  },
+                  redirect: function () {
+                    return location.protocol + '//' + location.host + location.pathname
+                  }
+                },
+                beforeMount: function () {
+                  if (window.location.hash) {
+                    var params = window.location.hash.substr(1).split('&').reduce(function (result, item) {
+                      var parts = item.split('=');
+                      result[parts[0]] = parts[1];
+                      return result;
+                    }, {});
+                    this.authorizationCode = params['code'];
+                    this.accessToken = params['access_token'];
+                    this.idToken = params['id_token'];
+                  }
+                }
+              })
+            </script>
+          </body>
+
+          </html>
+
+          EOF
+
+      - name: Build Docker Image - Login
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.CLI_VERSION }}
+          inlineScript: |
+            REGISTRY=$(az acr list -g $GROUP --query [0].loginServer -otsv)
+            az acr build --registry $REGISTRY --image self-managed-osdu-login:latest -f src/auth_token/Dockerfile src/auth_token
+
+      - name: Push OSDU Images
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.CLI_VERSION }}
+          inlineScript: |
+            REGISTRY=$(az acr list -g $GROUP --query [0].name -otsv)
+            IMAGES=('partition' \
+                    'entitlements' \
+                    'legal' \
+                    'schema' \
+                    'storage' \
+                    'file' \
+                    'dataset' \
+                    'indexer' \
+                    'indexer-queue' \
+                    'search' \
+                    'register' \
+                    'notification' \
+                    'unit' \
+                    'crs-catalog' \
+                    'crs-conversion' \
+                    'wks' \
+                    'workflow' \
+                    'wellbore-ddms' \
+                    'sdms' \
+                    'wellbore-ddms' \
+                    'schema-load' \
+                    'csv-parser' \
+                    'segy-to-zgy-conversion-dag' \
+                    'segy-to-vds-conversion-dag' )
+
+            for IMAGE in "${IMAGES[@]}"
+            do
+              echo "Upload $IMAGE:$OSDU_VERSION"
+              az acr import \
+              --name $REGISTRY \
+              --source msosdu.azurecr.io/$IMAGE:$OSDU_VERSION \
+              --image $IMAGE:$OSDU_VERSION \
+              --force --no-wait
+            done
+
+            az acr import --name $REGISTRY --source msosdu.azurecr.io/statsd:1.0.0 --image statsd:1.0.0 --force --no-wait
+            az acr import --name $REGISTRY --source msosdu.azurecr.io/airflow-function:1.0.0 --image airflow-function:1.0.0 --force --no-wait
+
+  env-data:
+    name: Load KV - Settings
+    runs-on: ubuntu-latest
+    needs: partition
+    steps:
+      - uses: Azure/login@v1.1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Save Rest-Client Environment to Common Vault
+        uses: Azure/cli@1.0.4
+        with:
+          azcliversion: ${{ env.CLI_VERSION }}
+          inlineScript: |
+            DP_GROUP=$(az group list --query "[?contains(name, 'dpl${{ secrets.RAND }}')].name" -otsv |grep -v MC)
+            DNS_HOST=$(az network public-ip list --resource-group $DP_GROUP --query [].dnsSettings.fqdn -otsv)
+            VAULT=$(az keyvault list --resource-group ${{ secrets.BUILDER_GROUP }} --query [].name -otsv)
+
+            cat > settings << EOF
+            "self-managed-osdu": {
+              "TENANT_ID": "$(az account show --query homeTenantId -otsv)",
+              "PRINCIPAL_ID": "$(echo '${{ secrets.OSDU_CREDENTIALS }}' | jq -r ".clientId")",
+              "PRINCIPAL_SECRET": "$(echo '${{ secrets.OSDU_CREDENTIALS }}' | jq -r ".clientSecret")",
+              "CLIENT_ID": "$(echo '${{ secrets.OSDU_APPLICATION }}' | jq -r ".appId")",
+              "CLIENT_SECRET": "",
+              "OSDU_HOST": "$DNS_HOST",
+              "REGION": "${{ secrets.AZURE_LOCATION }}",
+              "ES_HOST": "${{ secrets.ELASTIC_ENDPOINT }}",
+              "ES_AUTH_TOKEN": "$(printf "elastic:${{ secrets.ELASTIC_PASSWORD }}" | base64)",
+              "INITIAL_TOKEN": ""
+            }
+            EOF
+            az keyvault secret set --vault-name $VAULT --name "restclient" --file settings
