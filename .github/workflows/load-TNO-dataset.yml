@@ -47,3 +47,86 @@ jobs:
       - name: Execute generate manifest
         run: ./scripts/ingestion/generate-manifest.sh
         shell: bash
+
+
+  generate-authcode:
+    name: generate-authcode 
+    runs-on: ubuntu-latest
+    needs: validate-manifest-generation
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Make generate-manifest executeable
+        run: chmod +x ./scripts/ingestion/generate-manifest.sh
+        shell: bash
+
+      - name: Execute generate manifest
+        run: ./scripts/ingestion/generate-manifest.sh
+        shell: bash
+
+
+  update-entitlements:
+    name: update-entitlements 
+    runs-on: ubuntu-latest
+    needs: validate-manifest-generation
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Make generate-manifest executeable
+        run: chmod +x ./scripts/ingestion/generate-manifest.sh
+        shell: bash
+
+      - name: Execute generate manifest
+        run: ./scripts/ingestion/generate-manifest.sh
+        shell: bash    
+
+  create-legal-tag:
+    name: create-legal-tag 
+    runs-on: ubuntu-latest
+    needs: validate-manifest-generation
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Make generate-manifest executeable
+        run: chmod +x ./scripts/ingestion/generate-manifest.sh
+        shell: bash
+
+      - name: Execute generate manifest
+        run: ./scripts/ingestion/generate-manifest.sh
+        shell: bash      
+
+  setup-environment-variables:
+    name: setup-environment-variables 
+    runs-on: ubuntu-latest
+    needs: validate-manifest-generation
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Make generate-manifest executeable
+        run: chmod +x ./scripts/ingestion/generate-manifest.sh
+        shell: bash
+
+      - name: Execute generate manifest
+        run: ./scripts/ingestion/generate-manifest.sh
+        shell: bash      
+
+
+  ingest-reference-master-data:
+    name: ingest-reference-master-data
+    runs-on: ubuntu-latest
+    needs: [generate-authcode,update-entitlements,create-legal-tag,setup-environment-variables]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Make generate-manifest executeable
+        run: chmod +x ./scripts/ingestion/generate-manifest.sh
+        shell: bash
+
+      - name: Execute generate manifest
+        run: ./scripts/ingestion/generate-manifest.sh
+        shell: bash            
