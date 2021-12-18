@@ -1,0 +1,223 @@
+{
+    "kind": "osdu:wks:Manifest:1.0.0",
+    "ReferenceData": [],
+    "MasterData": [],
+    "Data": {
+        "WorkProduct": {
+            "kind": "osdu:wks:work-product--WorkProduct:1.0.0",
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            },
+            "data": {
+                "ResourceSecurityClassification": "osdu:reference-data--ResourceSecurityClassification:RESTRICTED:",
+                "Name": "8133.csv",
+                "Description": "Wellbore Marker",
+                "Components": [
+                    "surrogate-key:wpc-1"
+                ]
+            }
+        },
+        "WorkProductComponents": [
+            {
+                "id": "surrogate-key:wpc-1",
+                "kind": "osdu:wks:work-product-component--WellboreMarkerSet:1.0.0",
+                "acl": {
+                    "owners": [],
+                    "viewers": []
+                },
+                "legal": {
+                    "legaltags": [],
+                    "otherRelevantDataCountries": []
+                },
+                "meta": [
+                    {
+                        "kind": "Unit",
+                        "name": "m",
+                        "persistableReference": "",
+                        "unitOfMeasureID": "osdu:reference-data--UnitOfMeasure:m:",
+                        "propertyNames": [
+                            "Markers[].MarkerMeasuredDepth"
+                        ]
+                    }
+                ],
+                "data": {
+                    "ResourceSecurityClassification": "osdu:reference-data--ResourceSecurityClassification:RESTRICTED:",
+                    "Name": "8133.csv",
+                    "Description": "Wellbore Marker",
+                    "Datasets": [
+                        "surrogate-key:file-1"
+                    ],
+                    "WellboreID": "osdu:master-data--Wellbore:8133:",
+                    "Markers": [
+                        {
+                            "MarkerName": "Maassluis Formation",
+                            "MarkerMeasuredDepth": 0.0
+                        },
+                        {
+                            "MarkerName": "Oosterhout Formation",
+                            "MarkerMeasuredDepth": 236.34
+                        },
+                        {
+                            "MarkerName": "Breda Formation",
+                            "MarkerMeasuredDepth": 347.34
+                        },
+                        {
+                            "MarkerName": "Asse Member",
+                            "MarkerMeasuredDepth": 447.41
+                        },
+                        {
+                            "MarkerName": "Brussels Marl Member",
+                            "MarkerMeasuredDepth": 509.34
+                        },
+                        {
+                            "MarkerName": "Ieper Member",
+                            "MarkerMeasuredDepth": 588.29
+                        },
+                        {
+                            "MarkerName": "Basal Dongen Tuffite Member",
+                            "MarkerMeasuredDepth": 827.26
+                        },
+                        {
+                            "MarkerName": "Landen Clay Member",
+                            "MarkerMeasuredDepth": 841.14
+                        },
+                        {
+                            "MarkerName": "Ekofisk Formation",
+                            "MarkerMeasuredDepth": 850.38
+                        },
+                        {
+                            "MarkerName": "Ommelanden Formation",
+                            "MarkerMeasuredDepth": 884.0
+                        },
+                        {
+                            "MarkerName": "Plenus Marl Member",
+                            "MarkerMeasuredDepth": 1591.0
+                        },
+                        {
+                            "MarkerName": "Texel Formation",
+                            "MarkerMeasuredDepth": 1593.45
+                        },
+                        {
+                            "MarkerName": "Upper Holland Marl Member",
+                            "MarkerMeasuredDepth": 1648.0
+                        },
+                        {
+                            "MarkerName": "Vlieland Claystone Formation",
+                            "MarkerMeasuredDepth": 1667.0
+                        },
+                        {
+                            "MarkerName": "Rogenstein Member",
+                            "MarkerMeasuredDepth": 1698.0
+                        },
+                        {
+                            "MarkerName": "Main Claystone Member",
+                            "MarkerMeasuredDepth": 1815.0
+                        },
+                        {
+                            "MarkerName": "Zechstein Upper Claystone Formation",
+                            "MarkerMeasuredDepth": 2000.0
+                        },
+                        {
+                            "MarkerName": "Z4 Salt Member",
+                            "MarkerMeasuredDepth": 2019.0
+                        },
+                        {
+                            "MarkerName": "Z4 Pegmatite Anhydrite Member",
+                            "MarkerMeasuredDepth": 2105.0
+                        },
+                        {
+                            "MarkerName": "Red Salt Clay Member",
+                            "MarkerMeasuredDepth": 2106.0
+                        },
+                        {
+                            "MarkerName": "Z3 Salt Member",
+                            "MarkerMeasuredDepth": 2106.5
+                        },
+                        {
+                            "MarkerName": "Z3 Main Anhydrite Member",
+                            "MarkerMeasuredDepth": 2475.47
+                        },
+                        {
+                            "MarkerName": "Grey Salt Clay Member",
+                            "MarkerMeasuredDepth": 2518.16
+                        },
+                        {
+                            "MarkerName": "Z2 Salt Member",
+                            "MarkerMeasuredDepth": 2527.96
+                        },
+                        {
+                            "MarkerName": "Z2 Basal Anhydrite Member",
+                            "MarkerMeasuredDepth": 3251.82
+                        },
+                        {
+                            "MarkerName": "Z2 Carbonate Member",
+                            "MarkerMeasuredDepth": 3256.0
+                        },
+                        {
+                            "MarkerName": "Z1 Anhydrite Member",
+                            "MarkerMeasuredDepth": 3264.53
+                        },
+                        {
+                            "MarkerName": "Z1 Carbonate Member",
+                            "MarkerMeasuredDepth": 3281.71
+                        },
+                        {
+                            "MarkerName": "Coppershale Member",
+                            "MarkerMeasuredDepth": 3299.5
+                        },
+                        {
+                            "MarkerName": "Upper Silverpit Claystone Member",
+                            "MarkerMeasuredDepth": 3300.5
+                        },
+                        {
+                            "MarkerName": "Silverpit Evaporite Member",
+                            "MarkerMeasuredDepth": 3415.5
+                        },
+                        {
+                            "MarkerName": "Lower Silverpit Claystone Member",
+                            "MarkerMeasuredDepth": 3617.03
+                        },
+                        {
+                            "MarkerName": "Lower Slochteren Member",
+                            "MarkerMeasuredDepth": 3775.5
+                        },
+                        {
+                            "MarkerName": "Maurits Formation",
+                            "MarkerMeasuredDepth": 3780.5
+                        }
+                    ]
+                }
+            }
+        ],
+        "Datasets": [
+            {
+                "id": "surrogate-key:file-1",
+                "kind": "osdu:wks:dataset--File.Generic:1.0.0",
+                "acl": {
+                    "owners": [],
+                    "viewers": []
+                },
+                "legal": {
+                    "legaltags": [],
+                    "otherRelevantDataCountries": []
+                },
+                "data": {
+                    "ResourceSecurityClassification": "osdu:reference-data--ResourceSecurityClassification:RESTRICTED:",
+                    "SchemaFormatTypeID": "osdu:reference-data--SchemaFormatType:TabSeparatedColumnarText:",
+                    "DatasetProperties": {
+                        "FileSourceInfo": {
+                            "FileSource": "s3://osdu-seismic-test-data/r1/data/provided/markers/8133.csv",
+                            "Name": "8133.csv",
+                            "PreloadFilePath": "s3://osdu-seismic-test-data/r1/data/provided/markers/8133.csv"
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

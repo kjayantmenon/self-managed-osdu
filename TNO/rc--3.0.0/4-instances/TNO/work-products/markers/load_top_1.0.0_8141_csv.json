@@ -1,0 +1,203 @@
+{
+    "kind": "osdu:wks:Manifest:1.0.0",
+    "ReferenceData": [],
+    "MasterData": [],
+    "Data": {
+        "WorkProduct": {
+            "kind": "osdu:wks:work-product--WorkProduct:1.0.0",
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            },
+            "data": {
+                "ResourceSecurityClassification": "osdu:reference-data--ResourceSecurityClassification:RESTRICTED:",
+                "Name": "8141.csv",
+                "Description": "Wellbore Marker",
+                "Components": [
+                    "surrogate-key:wpc-1"
+                ]
+            }
+        },
+        "WorkProductComponents": [
+            {
+                "id": "surrogate-key:wpc-1",
+                "kind": "osdu:wks:work-product-component--WellboreMarkerSet:1.0.0",
+                "acl": {
+                    "owners": [],
+                    "viewers": []
+                },
+                "legal": {
+                    "legaltags": [],
+                    "otherRelevantDataCountries": []
+                },
+                "meta": [
+                    {
+                        "kind": "Unit",
+                        "name": "m",
+                        "persistableReference": "",
+                        "unitOfMeasureID": "osdu:reference-data--UnitOfMeasure:m:",
+                        "propertyNames": [
+                            "Markers[].MarkerMeasuredDepth"
+                        ]
+                    }
+                ],
+                "data": {
+                    "ResourceSecurityClassification": "osdu:reference-data--ResourceSecurityClassification:RESTRICTED:",
+                    "Name": "8141.csv",
+                    "Description": "Wellbore Marker",
+                    "Datasets": [
+                        "surrogate-key:file-1"
+                    ],
+                    "WellboreID": "osdu:master-data--Wellbore:8141:",
+                    "Markers": [
+                        {
+                            "MarkerName": "Upper North Sea Group",
+                            "MarkerMeasuredDepth": 0.0
+                        },
+                        {
+                            "MarkerName": "Middle North Sea Group",
+                            "MarkerMeasuredDepth": 457.0
+                        },
+                        {
+                            "MarkerName": "Asse Member",
+                            "MarkerMeasuredDepth": 481.0
+                        },
+                        {
+                            "MarkerName": "Brussels Sand Member",
+                            "MarkerMeasuredDepth": 508.0
+                        },
+                        {
+                            "MarkerName": "Ieper Member",
+                            "MarkerMeasuredDepth": 542.0
+                        },
+                        {
+                            "MarkerName": "Basal Dongen Sand Member",
+                            "MarkerMeasuredDepth": 780.0
+                        },
+                        {
+                            "MarkerName": "Dongen Clay Member",
+                            "MarkerMeasuredDepth": 815.0
+                        },
+                        {
+                            "MarkerName": "Ommelanden Formation",
+                            "MarkerMeasuredDepth": 841.0
+                        },
+                        {
+                            "MarkerName": "Texel Marlstone Member",
+                            "MarkerMeasuredDepth": 1882.0
+                        },
+                        {
+                            "MarkerName": "Texel Greensand Member",
+                            "MarkerMeasuredDepth": 1907.0
+                        },
+                        {
+                            "MarkerName": "Upper Holland Marl Member",
+                            "MarkerMeasuredDepth": 1935.0
+                        },
+                        {
+                            "MarkerName": "Middle Holland Claystone Member",
+                            "MarkerMeasuredDepth": 2088.0
+                        },
+                        {
+                            "MarkerName": "Holland Greensand Member",
+                            "MarkerMeasuredDepth": 2153.0
+                        },
+                        {
+                            "MarkerName": "Lower Holland Marl Member",
+                            "MarkerMeasuredDepth": 2235.0
+                        },
+                        {
+                            "MarkerName": "Vlieland Claystone Formation",
+                            "MarkerMeasuredDepth": 2300.0
+                        },
+                        {
+                            "MarkerName": "Berkel Sandstone Member",
+                            "MarkerMeasuredDepth": 2503.0
+                        },
+                        {
+                            "MarkerName": "Berkel Sand-Claystone Member",
+                            "MarkerMeasuredDepth": 2515.0
+                        },
+                        {
+                            "MarkerName": "Rijn Member",
+                            "MarkerMeasuredDepth": 2551.0
+                        },
+                        {
+                            "MarkerName": "Aalburg Formation",
+                            "MarkerMeasuredDepth": 2604.0
+                        },
+                        {
+                            "MarkerName": "Sleen Formation",
+                            "MarkerMeasuredDepth": 2805.0
+                        },
+                        {
+                            "MarkerName": "Keuper Formation",
+                            "MarkerMeasuredDepth": 2866.0
+                        },
+                        {
+                            "MarkerName": "Muschelkalk Formation",
+                            "MarkerMeasuredDepth": 2997.0
+                        },
+                        {
+                            "MarkerName": "R\u00f6t Formation",
+                            "MarkerMeasuredDepth": 3068.0
+                        },
+                        {
+                            "MarkerName": "Hardegsen Formation",
+                            "MarkerMeasuredDepth": 3118.0
+                        },
+                        {
+                            "MarkerName": "Detfurth Claystone Member",
+                            "MarkerMeasuredDepth": 3187.0
+                        },
+                        {
+                            "MarkerName": "Lower Detfurth Sandstone Member",
+                            "MarkerMeasuredDepth": 3223.0
+                        },
+                        {
+                            "MarkerName": "Volpriehausen Clay-Siltstone Member",
+                            "MarkerMeasuredDepth": 3252.0
+                        },
+                        {
+                            "MarkerName": "Lower Volpriehausen Sandstone Member",
+                            "MarkerMeasuredDepth": 3338.0
+                        },
+                        {
+                            "MarkerName": "Rogenstein Member",
+                            "MarkerMeasuredDepth": 3404.0
+                        }
+                    ]
+                }
+            }
+        ],
+        "Datasets": [
+            {
+                "id": "surrogate-key:file-1",
+                "kind": "osdu:wks:dataset--File.Generic:1.0.0",
+                "acl": {
+                    "owners": [],
+                    "viewers": []
+                },
+                "legal": {
+                    "legaltags": [],
+                    "otherRelevantDataCountries": []
+                },
+                "data": {
+                    "ResourceSecurityClassification": "osdu:reference-data--ResourceSecurityClassification:RESTRICTED:",
+                    "SchemaFormatTypeID": "osdu:reference-data--SchemaFormatType:TabSeparatedColumnarText:",
+                    "DatasetProperties": {
+                        "FileSourceInfo": {
+                            "FileSource": "s3://osdu-seismic-test-data/r1/data/provided/markers/8141.csv",
+                            "Name": "8141.csv",
+                            "PreloadFilePath": "s3://osdu-seismic-test-data/r1/data/provided/markers/8141.csv"
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

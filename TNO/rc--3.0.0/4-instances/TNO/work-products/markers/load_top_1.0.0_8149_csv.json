@@ -1,0 +1,239 @@
+{
+    "kind": "osdu:wks:Manifest:1.0.0",
+    "ReferenceData": [],
+    "MasterData": [],
+    "Data": {
+        "WorkProduct": {
+            "kind": "osdu:wks:work-product--WorkProduct:1.0.0",
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            },
+            "data": {
+                "ResourceSecurityClassification": "osdu:reference-data--ResourceSecurityClassification:RESTRICTED:",
+                "Name": "8149.csv",
+                "Description": "Wellbore Marker",
+                "Components": [
+                    "surrogate-key:wpc-1"
+                ]
+            }
+        },
+        "WorkProductComponents": [
+            {
+                "id": "surrogate-key:wpc-1",
+                "kind": "osdu:wks:work-product-component--WellboreMarkerSet:1.0.0",
+                "acl": {
+                    "owners": [],
+                    "viewers": []
+                },
+                "legal": {
+                    "legaltags": [],
+                    "otherRelevantDataCountries": []
+                },
+                "meta": [
+                    {
+                        "kind": "Unit",
+                        "name": "m",
+                        "persistableReference": "",
+                        "unitOfMeasureID": "osdu:reference-data--UnitOfMeasure:m:",
+                        "propertyNames": [
+                            "Markers[].MarkerMeasuredDepth"
+                        ]
+                    }
+                ],
+                "data": {
+                    "ResourceSecurityClassification": "osdu:reference-data--ResourceSecurityClassification:RESTRICTED:",
+                    "Name": "8149.csv",
+                    "Description": "Wellbore Marker",
+                    "Datasets": [
+                        "surrogate-key:file-1"
+                    ],
+                    "WellboreID": "osdu:master-data--Wellbore:8149:",
+                    "Markers": [
+                        {
+                            "MarkerName": "Upper North Sea Group",
+                            "MarkerMeasuredDepth": 0.0
+                        },
+                        {
+                            "MarkerName": "Middle North Sea Group",
+                            "MarkerMeasuredDepth": 672.0
+                        },
+                        {
+                            "MarkerName": "Lower North Sea Group",
+                            "MarkerMeasuredDepth": 689.0
+                        },
+                        {
+                            "MarkerName": "Upper Werkendam Member",
+                            "MarkerMeasuredDepth": 1067.0
+                        },
+                        {
+                            "MarkerName": "Middle Werkendam Member",
+                            "MarkerMeasuredDepth": 1118.0
+                        },
+                        {
+                            "MarkerName": "Lower Werkendam Member",
+                            "MarkerMeasuredDepth": 1216.0
+                        },
+                        {
+                            "MarkerName": "Posidonia Shale Formation",
+                            "MarkerMeasuredDepth": 1504.0
+                        },
+                        {
+                            "MarkerName": "Aalburg Formation",
+                            "MarkerMeasuredDepth": 1543.0
+                        },
+                        {
+                            "MarkerName": "Sleen Formation",
+                            "MarkerMeasuredDepth": 1966.0
+                        },
+                        {
+                            "MarkerName": "Upper Keuper Claystone Member",
+                            "MarkerMeasuredDepth": 1989.0
+                        },
+                        {
+                            "MarkerName": "Dolomitic Keuper Member",
+                            "MarkerMeasuredDepth": 2002.0
+                        },
+                        {
+                            "MarkerName": "Red Keuper Claystone Member",
+                            "MarkerMeasuredDepth": 2027.0
+                        },
+                        {
+                            "MarkerName": "Red Keuper Evaporite Member",
+                            "MarkerMeasuredDepth": 2091.0
+                        },
+                        {
+                            "MarkerName": "Middle Keuper Claystone Member",
+                            "MarkerMeasuredDepth": 2097.0
+                        },
+                        {
+                            "MarkerName": "Main Keuper Evaporite Member",
+                            "MarkerMeasuredDepth": 2166.0
+                        },
+                        {
+                            "MarkerName": "Lower Keuper Claystone Member",
+                            "MarkerMeasuredDepth": 2210.0
+                        },
+                        {
+                            "MarkerName": "Muschelkalk Claystone member",
+                            "MarkerMeasuredDepth": 2286.0
+                        },
+                        {
+                            "MarkerName": "Muschelkalk Evaporite Member",
+                            "MarkerMeasuredDepth": 2355.0
+                        },
+                        {
+                            "MarkerName": "Lower Muschelkalk Member",
+                            "MarkerMeasuredDepth": 2447.0
+                        },
+                        {
+                            "MarkerName": "R\u00f6t Claystone Member",
+                            "MarkerMeasuredDepth": 2530.0
+                        },
+                        {
+                            "MarkerName": "Main R\u00f6t Evaporite Member",
+                            "MarkerMeasuredDepth": 2623.0
+                        },
+                        {
+                            "MarkerName": "Solling Formation",
+                            "MarkerMeasuredDepth": 2687.0
+                        },
+                        {
+                            "MarkerName": "Hardegsen Formation",
+                            "MarkerMeasuredDepth": 2700.0
+                        },
+                        {
+                            "MarkerName": "Detfurth Claystone Member",
+                            "MarkerMeasuredDepth": 2739.0
+                        },
+                        {
+                            "MarkerName": "Lower Detfurth Sandstone Member",
+                            "MarkerMeasuredDepth": 2758.0
+                        },
+                        {
+                            "MarkerName": "Volpriehausen Clay-Siltstone Member",
+                            "MarkerMeasuredDepth": 2775.0
+                        },
+                        {
+                            "MarkerName": "Lower Volpriehausen Sandstone Member",
+                            "MarkerMeasuredDepth": 2866.0
+                        },
+                        {
+                            "MarkerName": "Rogenstein Member",
+                            "MarkerMeasuredDepth": 2990.0
+                        },
+                        {
+                            "MarkerName": "Main Claystone Member",
+                            "MarkerMeasuredDepth": 3185.0
+                        },
+                        {
+                            "MarkerName": "Zechstein Upper Claystone Formation",
+                            "MarkerMeasuredDepth": 3325.0
+                        },
+                        {
+                            "MarkerName": "Z2 Salt Member",
+                            "MarkerMeasuredDepth": 3359.0
+                        },
+                        {
+                            "MarkerName": "Z2 Basal Anhydrite Member",
+                            "MarkerMeasuredDepth": 3446.0
+                        },
+                        {
+                            "MarkerName": "Z2 Carbonate Member",
+                            "MarkerMeasuredDepth": 3451.0
+                        },
+                        {
+                            "MarkerName": "Z1 Anhydrite Member",
+                            "MarkerMeasuredDepth": 3465.0
+                        },
+                        {
+                            "MarkerName": "Z1 Carbonate Member",
+                            "MarkerMeasuredDepth": 3501.0
+                        },
+                        {
+                            "MarkerName": "Coppershale Member",
+                            "MarkerMeasuredDepth": 3505.0
+                        },
+                        {
+                            "MarkerName": "Slochteren Formation",
+                            "MarkerMeasuredDepth": 3506.0
+                        },
+                        {
+                            "MarkerName": "Maurits Formation",
+                            "MarkerMeasuredDepth": 3697.0
+                        }
+                    ]
+                }
+            }
+        ],
+        "Datasets": [
+            {
+                "id": "surrogate-key:file-1",
+                "kind": "osdu:wks:dataset--File.Generic:1.0.0",
+                "acl": {
+                    "owners": [],
+                    "viewers": []
+                },
+                "legal": {
+                    "legaltags": [],
+                    "otherRelevantDataCountries": []
+                },
+                "data": {
+                    "ResourceSecurityClassification": "osdu:reference-data--ResourceSecurityClassification:RESTRICTED:",
+                    "SchemaFormatTypeID": "osdu:reference-data--SchemaFormatType:TabSeparatedColumnarText:",
+                    "DatasetProperties": {
+                        "FileSourceInfo": {
+                            "FileSource": "s3://osdu-seismic-test-data/r1/data/provided/markers/8149.csv",
+                            "Name": "8149.csv",
+                            "PreloadFilePath": "s3://osdu-seismic-test-data/r1/data/provided/markers/8149.csv"
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}
