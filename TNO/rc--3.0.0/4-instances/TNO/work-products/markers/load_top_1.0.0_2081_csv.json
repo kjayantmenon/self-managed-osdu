@@ -1,0 +1,227 @@
+{
+    "kind": "osdu:wks:Manifest:1.0.0",
+    "ReferenceData": [],
+    "MasterData": [],
+    "Data": {
+        "WorkProduct": {
+            "kind": "osdu:wks:work-product--WorkProduct:1.0.0",
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            },
+            "data": {
+                "ResourceSecurityClassification": "osdu:reference-data--ResourceSecurityClassification:RESTRICTED:",
+                "Name": "2081.csv",
+                "Description": "Wellbore Marker",
+                "Components": [
+                    "surrogate-key:wpc-1"
+                ]
+            }
+        },
+        "WorkProductComponents": [
+            {
+                "id": "surrogate-key:wpc-1",
+                "kind": "osdu:wks:work-product-component--WellboreMarkerSet:1.0.0",
+                "acl": {
+                    "owners": [],
+                    "viewers": []
+                },
+                "legal": {
+                    "legaltags": [],
+                    "otherRelevantDataCountries": []
+                },
+                "meta": [
+                    {
+                        "kind": "Unit",
+                        "name": "m",
+                        "persistableReference": "",
+                        "unitOfMeasureID": "osdu:reference-data--UnitOfMeasure:m:",
+                        "propertyNames": [
+                            "Markers[].MarkerMeasuredDepth"
+                        ]
+                    }
+                ],
+                "data": {
+                    "ResourceSecurityClassification": "osdu:reference-data--ResourceSecurityClassification:RESTRICTED:",
+                    "Name": "2081.csv",
+                    "Description": "Wellbore Marker",
+                    "Datasets": [
+                        "surrogate-key:file-1"
+                    ],
+                    "WellboreID": "osdu:master-data--Wellbore:2081:",
+                    "Markers": [
+                        {
+                            "MarkerName": "UNKNOWN",
+                            "MarkerMeasuredDepth": 0.0
+                        },
+                        {
+                            "MarkerName": "Ommelanden Formation",
+                            "MarkerMeasuredDepth": 1385.0
+                        },
+                        {
+                            "MarkerName": "Texel Formation",
+                            "MarkerMeasuredDepth": 1654.0
+                        },
+                        {
+                            "MarkerName": "Upper Holland Marl Member",
+                            "MarkerMeasuredDepth": 1708.0
+                        },
+                        {
+                            "MarkerName": "Middle Holland Claystone Member",
+                            "MarkerMeasuredDepth": 1773.5
+                        },
+                        {
+                            "MarkerName": "Lower Holland Marl Member",
+                            "MarkerMeasuredDepth": 1787.0
+                        },
+                        {
+                            "MarkerName": "Vlieland Claystone Formation",
+                            "MarkerMeasuredDepth": 1800.5
+                        },
+                        {
+                            "MarkerName": "Lower Muschelkalk Member",
+                            "MarkerMeasuredDepth": 1816.0
+                        },
+                        {
+                            "MarkerName": "Upper R\u00f6t Claystone Member",
+                            "MarkerMeasuredDepth": 1843.0
+                        },
+                        {
+                            "MarkerName": "Upper R\u00f6t Evaporite Member",
+                            "MarkerMeasuredDepth": 1928.0
+                        },
+                        {
+                            "MarkerName": "Intermediate R\u00f6t Claystone Member",
+                            "MarkerMeasuredDepth": 1935.0
+                        },
+                        {
+                            "MarkerName": "Main R\u00f6t Evaporite Member",
+                            "MarkerMeasuredDepth": 1953.0
+                        },
+                        {
+                            "MarkerName": "Solling Claystone Member",
+                            "MarkerMeasuredDepth": 2069.5
+                        },
+                        {
+                            "MarkerName": "Rogenstein Member",
+                            "MarkerMeasuredDepth": 2099.0
+                        },
+                        {
+                            "MarkerName": "FAULT",
+                            "MarkerMeasuredDepth": 2165.0
+                        },
+                        {
+                            "MarkerName": "Main Claystone Member",
+                            "MarkerMeasuredDepth": 2165.0
+                        },
+                        {
+                            "MarkerName": "Zechstein Upper Claystone Formation",
+                            "MarkerMeasuredDepth": 2262.0
+                        },
+                        {
+                            "MarkerName": "Z4 Salt Member",
+                            "MarkerMeasuredDepth": 2267.0
+                        },
+                        {
+                            "MarkerName": "Z4 Pegmatite Anhydrite Member",
+                            "MarkerMeasuredDepth": 2288.5
+                        },
+                        {
+                            "MarkerName": "Red Salt Clay Member",
+                            "MarkerMeasuredDepth": 2290.0
+                        },
+                        {
+                            "MarkerName": "Z3 Salt Member",
+                            "MarkerMeasuredDepth": 2295.0
+                        },
+                        {
+                            "MarkerName": "Z3 Main Anhydrite Member",
+                            "MarkerMeasuredDepth": 2474.0
+                        },
+                        {
+                            "MarkerName": "Z3 Carbonate Member",
+                            "MarkerMeasuredDepth": 2482.0
+                        },
+                        {
+                            "MarkerName": "Grey Salt Clay Member",
+                            "MarkerMeasuredDepth": 2504.5
+                        },
+                        {
+                            "MarkerName": "Z2 Salt Member",
+                            "MarkerMeasuredDepth": 2506.0
+                        },
+                        {
+                            "MarkerName": "Z2 Basal Anhydrite Member",
+                            "MarkerMeasuredDepth": 2669.0
+                        },
+                        {
+                            "MarkerName": "Z2 Carbonate Member",
+                            "MarkerMeasuredDepth": 2674.0
+                        },
+                        {
+                            "MarkerName": "Z1 Anhydrite Member",
+                            "MarkerMeasuredDepth": 2682.0
+                        },
+                        {
+                            "MarkerName": "FAULT",
+                            "MarkerMeasuredDepth": 2705.0
+                        },
+                        {
+                            "MarkerName": "Z1 Anhydrite Member",
+                            "MarkerMeasuredDepth": 2705.0
+                        },
+                        {
+                            "MarkerName": "Z1 Carbonate Member",
+                            "MarkerMeasuredDepth": 2705.5
+                        },
+                        {
+                            "MarkerName": "Coppershale Member",
+                            "MarkerMeasuredDepth": 2714.5
+                        },
+                        {
+                            "MarkerName": "Ten Boer Member",
+                            "MarkerMeasuredDepth": 2715.0
+                        },
+                        {
+                            "MarkerName": "Slochteren Formation",
+                            "MarkerMeasuredDepth": 2750.0
+                        },
+                        {
+                            "MarkerName": "Caumer Subgroup",
+                            "MarkerMeasuredDepth": 2859.0
+                        }
+                    ]
+                }
+            }
+        ],
+        "Datasets": [
+            {
+                "id": "surrogate-key:file-1",
+                "kind": "osdu:wks:dataset--File.Generic:1.0.0",
+                "acl": {
+                    "owners": [],
+                    "viewers": []
+                },
+                "legal": {
+                    "legaltags": [],
+                    "otherRelevantDataCountries": []
+                },
+                "data": {
+                    "ResourceSecurityClassification": "osdu:reference-data--ResourceSecurityClassification:RESTRICTED:",
+                    "SchemaFormatTypeID": "osdu:reference-data--SchemaFormatType:TabSeparatedColumnarText:",
+                    "DatasetProperties": {
+                        "FileSourceInfo": {
+                            "FileSource": "s3://osdu-seismic-test-data/r1/data/provided/markers/2081.csv",
+                            "Name": "2081.csv",
+                            "PreloadFilePath": "s3://osdu-seismic-test-data/r1/data/provided/markers/2081.csv"
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

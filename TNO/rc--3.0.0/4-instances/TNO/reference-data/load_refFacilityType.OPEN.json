@@ -1,0 +1,39 @@
+{
+    "kind": "osdu:wks:Manifest:1.0.0",
+    "ReferenceData": [
+        {
+            "id": "osdu:reference-data--FacilityType:Well",
+            "kind": "osdu:wks:reference-data--FacilityType:1.0.0",
+            "data": {
+                "Source": "TNO",
+                "Name": "Well",
+                "Code": "Well"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--FacilityType:Wellbore",
+            "kind": "osdu:wks:reference-data--FacilityType:1.0.0",
+            "data": {
+                "Source": "TNO",
+                "Name": "Wellbore",
+                "Code": "Wellbore"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        }
+    ]
+}

@@ -1,0 +1,165 @@
+{
+    "kind": "osdu:wks:Manifest:1.0.0",
+    "ReferenceData": [
+        {
+            "id": "osdu:reference-data--VerticalMeasurementType:CellarFloor",
+            "kind": "osdu:wks:reference-data--VerticalMeasurementType:1.0.0",
+            "data": {
+                "Name": "Cellar Floor",
+                "Code": "CellarFloor"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--VerticalMeasurementType:CollarFlange",
+            "kind": "osdu:wks:reference-data--VerticalMeasurementType:1.0.0",
+            "data": {
+                "Name": "Collar Flange",
+                "Code": "CollarFlange"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--VerticalMeasurementType:DrillFloor",
+            "kind": "osdu:wks:reference-data--VerticalMeasurementType:1.0.0",
+            "data": {
+                "Name": "Drill Floor",
+                "Code": "DrillFloor"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--VerticalMeasurementType:GL",
+            "kind": "osdu:wks:reference-data--VerticalMeasurementType:1.0.0",
+            "data": {
+                "Name": "Ground Level",
+                "Code": "GL"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--VerticalMeasurementType:KB",
+            "kind": "osdu:wks:reference-data--VerticalMeasurementType:1.0.0",
+            "data": {
+                "Name": "Kelly Bushing",
+                "Code": "KB"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--VerticalMeasurementType:WaterBottom",
+            "kind": "osdu:wks:reference-data--VerticalMeasurementType:1.0.0",
+            "data": {
+                "Name": "Waterbottom",
+                "Code": "WaterBottom"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--VerticalMeasurementType:NAP",
+            "kind": "osdu:wks:reference-data--VerticalMeasurementType:1.0.0",
+            "data": {
+                "Name": "Amsterdam Ordnance Datum",
+                "Code": "NAP"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--VerticalMeasurementType:RotaryTable",
+            "kind": "osdu:wks:reference-data--VerticalMeasurementType:1.0.0",
+            "data": {
+                "Name": "Rotary Table",
+                "Code": "RotaryTable"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--VerticalMeasurementType:SeaLevel",
+            "kind": "osdu:wks:reference-data--VerticalMeasurementType:1.0.0",
+            "data": {
+                "Name": "Sea Level",
+                "Code": "SeaLevel"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--VerticalMeasurementType:TD",
+            "kind": "osdu:wks:reference-data--VerticalMeasurementType:1.0.0",
+            "data": {
+                "Name": "Total Depth",
+                "Code": "TD"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        }
+    ]
+}

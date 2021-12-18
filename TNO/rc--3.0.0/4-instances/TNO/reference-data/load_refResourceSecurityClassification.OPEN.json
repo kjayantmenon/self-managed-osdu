@@ -1,0 +1,21 @@
+{
+    "kind": "osdu:wks:Manifest:1.0.0",
+    "ReferenceData": [
+        {
+            "id": "osdu:reference-data--ResourceSecurityClassification:RESTRICTED",
+            "kind": "osdu:wks:reference-data--ResourceSecurityClassification:1.0.0",
+            "data": {
+                "Name": "RESTRICTED",
+                "Code": "RESTRICTED"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        }
+    ]
+}

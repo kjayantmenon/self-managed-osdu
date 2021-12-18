@@ -1,0 +1,71 @@
+{
+    "kind": "osdu:wks:Manifest:1.0.0",
+    "ReferenceData": [
+        {
+            "id": "osdu:reference-data--CoordinateReferenceSystem:23031",
+            "kind": "osdu:wks:reference-data--CoordinateReferenceSystem:1.0.0",
+            "data": {
+                "Source": "TNO",
+                "Name": "ED50 / UTM zone 31N",
+                "AttributionAuthority": "EPSG",
+                "CodeSpace": "23031",
+                "Kind": "bound CRS",
+                "CoordinateReferenceSystemType": "GeodeticCRS",
+                "PersistableReference": "{\"authCode\":{\"auth\":\"OSDU\",\"code\":\"23031001\"},\"lateBoundCRS\":{\"authCode\":{\"auth\":\"EPSG\",\"code\":\"23031\"},\"name\":\"ED_1950_UTM_Zone_31N\",\"type\":\"LBC\",\"ver\":\"PE_10_3_1\",\"wkt\":\"PROJCS[\\\"ED_1950_UTM_Zone_31N\\\",GEOGCS[\\\"GCS_European_1950\\\",DATUM[\\\"D_European_1950\\\",SPHEROID[\\\"International_1924\\\",6378388.0,297.0]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],PROJECTION[\\\"Transverse_Mercator\\\"],PARAMETER[\\\"False_Easting\\\",500000.0],PARAMETER[\\\"False_Northing\\\",0.0],PARAMETER[\\\"Central_Meridian\\\",3.0],PARAMETER[\\\"Scale_Factor\\\",0.9996],PARAMETER[\\\"Latitude_Of_Origin\\\",0.0],UNIT[\\\"Meter\\\",1.0],AUTHORITY[\\\"EPSG\\\",23031]]\"},\"name\":\"ED50 * DMA-mean / UTM zone 31N [23031,1133]\",\"singleCT\":{\"authCode\":{\"auth\":\"EPSG\",\"code\":\"1133\"},\"name\":\"ED_1950_To_WGS_1984_1\",\"type\":\"ST\",\"ver\":\"PE_10_3_1\",\"wkt\":\"GEOGTRAN[\\\"ED_1950_To_WGS_1984_1\\\",GEOGCS[\\\"GCS_European_1950\\\",DATUM[\\\"D_European_1950\\\",SPHEROID[\\\"International_1924\\\",6378388.0,297.0]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],GEOGCS[\\\"GCS_WGS_1984\\\",DATUM[\\\"D_WGS_1984\\\",SPHEROID[\\\"WGS_1984\\\",6378137.0,298.257223563]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],METHOD[\\\"Geocentric_Translation\\\"],PARAMETER[\\\"X_Axis_Translation\\\",-87.0],PARAMETER[\\\"Y_Axis_Translation\\\",-98.0],PARAMETER[\\\"Z_Axis_Translation\\\",-121.0],AUTHORITY[\\\"EPSG\\\",1133]]\"},\"type\":\"EBC\",\"ver\":\"PE_10_3_1\"}"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--CoordinateReferenceSystem:MSL",
+            "kind": "osdu:wks:reference-data--CoordinateReferenceSystem:1.0.0",
+            "data": {
+                "Source": "TNO",
+                "Name": "MSL",
+                "AttributionAuthority": "EPSG",
+                "CodeSpace": "5714",
+                "Kind": "vertical",
+                "CoordinateReferenceSystemType": "VerticalCRS",
+                "PersistableReference": "{\"authCode\":{\"auth\":\"EPSG\",\"code\":\"5714\"},\"name\":\"MSL_Height\",\"type\":\"LBC\",\"ver\":\"PE_10_3_1\",\"wkt\":\"VERTCS[\\\"MSL_Height\\\",VDATUM[\\\"Mean_Sea_Level\\\"],PARAMETER[\\\"Vertical_Shift\\\",0.0],PARAMETER[\\\"Direction\\\",1.0],UNIT[\\\"Meter\\\",1.0],AUTHORITY[\\\"EPSG\\\",5714]]\"}"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--CoordinateReferenceSystem:5709",
+            "kind": "osdu:wks:reference-data--CoordinateReferenceSystem:1.0.0",
+            "data": {
+                "Source": "TNO",
+                "Name": "NAP Height",
+                "AttributionAuthority": "EPSG",
+                "CodeSpace": "5709",
+                "Kind": "vertical",
+                "CoordinateReferenceSystemType": "VerticalCRS",
+                "Datum": {
+                    "Name": "Mean Sea Level"
+                },
+                "PersistableReference": "VERT_CS[\"NAP height\",VERT_DATUM[\"Normaal Amsterdams Peil\",2005],UNIT[\"Meter\",1]]"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        }
+    ]
+}

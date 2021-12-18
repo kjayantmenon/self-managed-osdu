@@ -1,0 +1,56 @@
+{
+    "kind": "osdu:wks:Manifest:1.0.0",
+    "ReferenceData": [
+        {
+            "id": "osdu:reference-data--WellboreTrajectoryType:Deviated",
+            "kind": "osdu:wks:reference-data--WellboreTrajectoryType:1.0.0",
+            "data": {
+                "Source": "TNO",
+                "Name": "Deviated",
+                "Code": "Deviated"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--WellboreTrajectoryType:Horizontal",
+            "kind": "osdu:wks:reference-data--WellboreTrajectoryType:1.0.0",
+            "data": {
+                "Source": "TNO",
+                "Name": "Horizontal",
+                "Code": "Horizontal"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--WellboreTrajectoryType:Vertical",
+            "kind": "osdu:wks:reference-data--WellboreTrajectoryType:1.0.0",
+            "data": {
+                "Source": "TNO",
+                "Name": "Vertical",
+                "Code": "Vertical"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        }
+    ]
+}

@@ -1,0 +1,107 @@
+{
+    "kind": "osdu:wks:Manifest:1.0.0",
+    "ReferenceData": [
+        {
+            "id": "osdu:reference-data--GeoPoliticalEntityType:BlockID",
+            "kind": "osdu:wks:reference-data--GeoPoliticalEntityType:1.0.0",
+            "data": {
+                "Source": "TNO",
+                "Name": "BlockID",
+                "Code": "BlockID"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--GeoPoliticalEntityType:Country",
+            "kind": "osdu:wks:reference-data--GeoPoliticalEntityType:1.0.0",
+            "data": {
+                "Source": "TNO",
+                "Name": "Country",
+                "Code": "Country"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--GeoPoliticalEntityType:Municipality",
+            "kind": "osdu:wks:reference-data--GeoPoliticalEntityType:1.0.0",
+            "data": {
+                "Source": "TNO",
+                "Name": "Municipality",
+                "Code": "Municipality"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--GeoPoliticalEntityType:Province",
+            "kind": "osdu:wks:reference-data--GeoPoliticalEntityType:1.0.0",
+            "data": {
+                "Source": "TNO",
+                "Name": "Province",
+                "Code": "Province"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--GeoPoliticalEntityType:Quadrant",
+            "kind": "osdu:wks:reference-data--GeoPoliticalEntityType:1.0.0",
+            "data": {
+                "Source": "TNO",
+                "Name": "Quadrant",
+                "Code": "Quadrant"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        },
+        {
+            "id": "osdu:reference-data--GeoPoliticalEntityType:State%2FProvinceID",
+            "kind": "osdu:wks:reference-data--GeoPoliticalEntityType:1.0.0",
+            "data": {
+                "Source": "TNO",
+                "Name": "Province",
+                "Code": "State%2FProvinceID"
+            },
+            "acl": {
+                "owners": [],
+                "viewers": []
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        }
+    ]
+}
