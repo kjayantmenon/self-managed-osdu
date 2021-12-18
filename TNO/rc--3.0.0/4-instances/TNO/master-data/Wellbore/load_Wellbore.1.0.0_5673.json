@@ -1,0 +1,172 @@
+{
+    "kind": "osdu:wks:Manifest:1.0.0",
+    "MasterData": [
+        {
+            "id": "osdu:master-data--Wellbore:5673",
+            "kind": "osdu:wks:master-data--Wellbore:1.0.0",
+            "acl": {
+                "owners": [
+                    "ownergroup@testcompany.com"
+                ],
+                "viewers": [
+                    "viewgroup@testcompany.com"
+                ]
+            },
+            "meta": [
+                {
+                    "kind": "Unit",
+                    "name": "m",
+                    "persistableReference": "{\"abcd\":{\"a\":0.0,\"b\":1.0,\"c\":1.0,\"d\":0.0},\"symbol\":\"m\",\"baseMeasurement\":{\"ancestry\":\"L\",\"type\":\"UM\"},\"type\":\"UAD\"}",
+                    "unitOfMeasureID": "osdu:reference-data--UnitOfMeasure:m:",
+                    "propertyNames": [
+                        "VerticalMeasurements[].VerticalMeasurement"
+                    ]
+                }
+            ],
+            "data": {
+                "NameAliases": [
+                    {
+                        "AliasName": "5673",
+                        "AliasNameTypeID": "osdu:reference-data--AliasNameType:UWI:"
+                    },
+                    {
+                        "AliasName": "CAL-GT-02",
+                        "AliasNameTypeID": "osdu:reference-data--AliasNameType:BoreholeCode:"
+                    },
+                    {
+                        "AliasName": "CALIFORNIE-GT-02",
+                        "AliasNameTypeID": "osdu:reference-data--AliasNameType:Borehole:"
+                    }
+                ],
+                "GeoContexts": [
+                    {
+                        "GeoPoliticalEntityID": "osdu:master-data--GeoPoliticalEntity:Limburg_Province:",
+                        "GeoTypeID": "osdu:reference-data--GeoPoliticalEntityType:Province:"
+                    },
+                    {
+                        "GeoPoliticalEntityID": "osdu:master-data--GeoPoliticalEntity:Horst%20aan%20de%20Maas_Municipality:",
+                        "GeoTypeID": "osdu:reference-data--GeoPoliticalEntityType:Municipality:"
+                    },
+                    {
+                        "FieldID": "osdu:master-data--Field:Californi%C3%AF%C2%BF%C2%BD%20Geothermie:",
+                        "GeoTypeID": "Field"
+                    }
+                ],
+                "SpatialLocation": {
+                    "AsIngestedCoordinates": {
+                        "type": "AnyCrsFeatureCollection",
+                        "CoordinateReferenceSystemID": "osdu:reference-data--CoordinateReferenceSystem:23031:",
+                        "persistableReferenceCrs": "{\"authCode\":{\"auth\":\"EPSG\",\"code\":\"23031\"},\"name\":\"ED_1950_UTM_Zone_31N\",\"type\":\"LBC\",\"ver\":\"PE_10_3_1\",\"wkt\":\"PROJCS[\\\"ED_1950_UTM_Zone_31N\\\",GEOGCS[\\\"GCS_European_1950\\\",DATUM[\\\"D_European_1950\\\",SPHEROID[\\\"International_1924\\\",6378388.0,297.0]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],PROJECTION[\\\"Transverse_Mercator\\\"],PARAMETER[\\\"False_Easting\\\",500000.0],PARAMETER[\\\"False_Northing\\\",0.0],PARAMETER[\\\"Central_Meridian\\\",3.0],PARAMETER[\\\"Scale_Factor\\\",0.9996],PARAMETER[\\\"Latitude_Of_Origin\\\",0.0],UNIT[\\\"Meter\\\",1.0],AUTHORITY[\\\"EPSG\\\",23031]]\"}",
+                        "features": [
+                            {
+                                "type": "AnyCrsFeature",
+                                "geometry": {
+                                    "type": "AnyCrsPoint",
+                                    "coordinates": [
+                                        714937.0,
+                                        5701435.0
+                                    ]
+                                },
+                                "properties": {}
+                            }
+                        ]
+                    },
+                    "Wgs84Coordinates": {
+                        "type": "FeatureCollection",
+                        "features": [
+                            {
+                                "type": "Feature",
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [
+                                        6.09020567,
+                                        51.42145335
+                                    ]
+                                },
+                                "properties": {}
+                            }
+                        ]
+                    }
+                },
+                "FacilityID": "Drillmec%20300%20HH%20(DS20)",
+                "FacilityTypeID": "osdu:reference-data--FacilityType:Wellbore:",
+                "InitialOperatorID": "osdu:master-data--Organisation:Californie%20Wijnen%20Geothermie%20B.V.:",
+                "CurrentOperatorID": "osdu:master-data--Organisation:Californie%20Wijnen%20Geothermie%20B.V.:",
+                "OperatingEnvironmentID": "osdu:reference-data--OperatingEnvironment:On:",
+                "FacilityName": "5673",
+                "FacilityStates": [
+                    {
+                        "FacilityStateTypeID": "osdu:reference-data--FacilityStateType:ShutIn:"
+                    }
+                ],
+                "FacilityEvents": [
+                    {
+                        "FacilityEventTypeID": "osdu:reference-data--FacilityEventType:Spud:",
+                        "EffectiveDateTime": "2012-08-20T00:00:00"
+                    },
+                    {
+                        "FacilityEventTypeID": "osdu:reference-data--FacilityEventType:TDReached:",
+                        "EffectiveDateTime": "2012-09-21T00:00:00"
+                    }
+                ],
+                "WellID": "osdu:master-data--Well:5673:",
+                "SequenceNumber": 1,
+                "VerticalMeasurements": [
+                    {
+                        "VerticalMeasurementID": "TD-Original",
+                        "VerticalMeasurement": 1694.0,
+                        "VerticalMeasurementTypeID": "osdu:reference-data--VerticalMeasurementType:TD:",
+                        "VerticalMeasurementPathID": "osdu:reference-data--VerticalMeasurementPath:MD:",
+                        "VerticalReferenceID": "Measured_From"
+                    },
+                    {
+                        "VerticalMeasurementID": "TVD",
+                        "VerticalMeasurement": 1481.68,
+                        "VerticalMeasurementTypeID": "osdu:reference-data--VerticalMeasurementType:TD:",
+                        "VerticalMeasurementPathID": "osdu:reference-data--VerticalMeasurementPath:TVD:",
+                        "VerticalReferenceID": "Measured_From"
+                    },
+                    {
+                        "VerticalMeasurementID": "Measured_From",
+                        "VerticalMeasurement": 32.0,
+                        "VerticalMeasurementTypeID": "osdu:reference-data--VerticalMeasurementType:RotaryTable:",
+                        "VerticalMeasurementPathID": "osdu:reference-data--VerticalMeasurementPath:Elevation:",
+                        "VerticalCRSID": "osdu:reference-data--CoordinateReferenceSystem:5709:"
+                    }
+                ],
+                "DrillingReasons": [
+                    {
+                        "DrillingReasonTypeID": "osdu:reference-data--DrillingReasonType:DEV-PH:"
+                    }
+                ],
+                "TrajectoryTypeID": "osdu:reference-data--WellboreTrajectoryType:Deviated:",
+                "PrimaryMaterialID": "osdu:reference-data--MaterialType:Wtr:",
+                "DefaultVerticalMeasurementID": "Measured_From",
+                "ProjectedBottomHoleLocation": {
+                    "AsIngestedCoordinates": {
+                        "type": "AnyCrsFeatureCollection",
+                        "CoordinateReferenceSystemID": "osdu:reference-data--CoordinateReferenceSystem:23031:",
+                        "persistableReferenceCrs": "{\"authCode\":{\"auth\":\"EPSG\",\"code\":\"23031\"},\"name\":\"ED_1950_UTM_Zone_31N\",\"type\":\"LBC\",\"ver\":\"PE_10_3_1\",\"wkt\":\"PROJCS[\\\"ED_1950_UTM_Zone_31N\\\",GEOGCS[\\\"GCS_European_1950\\\",DATUM[\\\"D_European_1950\\\",SPHEROID[\\\"International_1924\\\",6378388.0,297.0]],PRIMEM[\\\"Greenwich\\\",0.0],UNIT[\\\"Degree\\\",0.0174532925199433]],PROJECTION[\\\"Transverse_Mercator\\\"],PARAMETER[\\\"False_Easting\\\",500000.0],PARAMETER[\\\"False_Northing\\\",0.0],PARAMETER[\\\"Central_Meridian\\\",3.0],PARAMETER[\\\"Scale_Factor\\\",0.9996],PARAMETER[\\\"Latitude_Of_Origin\\\",0.0],UNIT[\\\"Meter\\\",1.0],AUTHORITY[\\\"EPSG\\\",23031]]\"}",
+                        "features": [
+                            {
+                                "type": "AnyCrsFeature",
+                                "geometry": {
+                                    "type": "AnyCrsPoint",
+                                    "coordinates": [
+                                        715277.0,
+                                        5702059.0
+                                    ]
+                                },
+                                "properties": {}
+                            }
+                        ]
+                    }
+                }
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        }
+    ]
+}
