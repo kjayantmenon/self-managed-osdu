@@ -1,0 +1,100 @@
+{
+    "kind": "osdu:wks:Manifest:1.0.0",
+    "MasterData": [
+        {
+            "id": "osdu:master-data--Well:9296",
+            "kind": "osdu:wks:master-data--Well:1.0.0",
+            "acl": {
+                "owners": [
+                    "ownergroup@testcompany.com"
+                ],
+                "viewers": [
+                    "viewgroup@testcompany.com"
+                ]
+            },
+            "meta": [
+                {
+                    "kind": "Unit",
+                    "name": "m",
+                    "persistableReference": "{\"abcd\":{\"a\":0.0,\"b\":1.0,\"c\":1.0,\"d\":0.0},\"symbol\":\"m\",\"baseMeasurement\":{\"ancestry\":\"L\",\"type\":\"UM\"},\"type\":\"UAD\"}",
+                    "unitOfMeasureID": "osdu:reference-data--UnitOfMeasure:m:",
+                    "propertyNames": [
+                        "VerticalMeasurements[].VerticalMeasurement"
+                    ]
+                }
+            ],
+            "data": {
+                "Source": "TNO",
+                "NameAliases": [
+                    {
+                        "AliasName": "Q10-A-05",
+                        "AliasNameTypeID": "osdu:reference-data--AliasNameType:Well:"
+                    },
+                    {
+                        "AliasName": "9296",
+                        "AliasNameTypeID": "osdu:reference-data--AliasNameType:UWI:"
+                    }
+                ],
+                "GeoContexts": [
+                    {
+                        "GeoPoliticalEntityID": "osdu:master-data--GeoPoliticalEntity:Netherlands_Country:",
+                        "GeoTypeID": "osdu:reference-data--GeoPoliticalEntityType:Country:"
+                    },
+                    {
+                        "GeoPoliticalEntityID": "osdu:master-data--GeoPoliticalEntity:Q10_BlockID:",
+                        "GeoTypeID": "osdu:reference-data--GeoPoliticalEntityType:BlockID:"
+                    }
+                ],
+                "SpatialLocation": {
+                    "Wgs84Coordinates": {
+                        "type": "FeatureCollection",
+                        "features": [
+                            {
+                                "type": "Feature",
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [
+                                        4.21472357,
+                                        52.49570359
+                                    ]
+                                },
+                                "properties": {}
+                            }
+                        ]
+                    }
+                },
+                "FacilityTypeID": "osdu:reference-data--FacilityType:Well:",
+                "FacilityOperators": [
+                    {
+                        "FacilityOperatorOrganisationID": "osdu:master-data--Organisation:Tulip%20Oil%20Netherlands%20Offshore:"
+                    }
+                ],
+                "OperatingEnvironmentID": "osdu:reference-data--OperatingEnvironment:Off:",
+                "FacilityName": "Q10-A-05",
+                "FacilityStates": [
+                    {
+                        "FacilityStateTypeID": "osdu:reference-data--FacilityStateType:Unknown:"
+                    }
+                ],
+                "FacilityEvents": [
+                    {
+                        "FacilityEventTypeID": "osdu:reference-data--FacilityEventType:Spud:",
+                        "EffectiveDateTime": "2019-01-15T00:00:00"
+                    },
+                    {
+                        "FacilityEventTypeID": "osdu:reference-data--FacilityEventType:TDReached:"
+                    }
+                ],
+                "VerticalMeasurements": [
+                    {
+                        "VerticalMeasurementPathID": "osdu:reference-data--VerticalMeasurementPath:Elevation:"
+                    }
+                ]
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        }
+    ]
+}

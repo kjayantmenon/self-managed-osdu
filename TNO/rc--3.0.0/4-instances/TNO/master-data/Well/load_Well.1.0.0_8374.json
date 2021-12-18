@@ -1,0 +1,106 @@
+{
+    "kind": "osdu:wks:Manifest:1.0.0",
+    "MasterData": [
+        {
+            "id": "osdu:master-data--Well:8374",
+            "kind": "osdu:wks:master-data--Well:1.0.0",
+            "acl": {
+                "owners": [
+                    "ownergroup@testcompany.com"
+                ],
+                "viewers": [
+                    "viewgroup@testcompany.com"
+                ]
+            },
+            "meta": [
+                {
+                    "kind": "Unit",
+                    "name": "m",
+                    "persistableReference": "{\"abcd\":{\"a\":0.0,\"b\":1.0,\"c\":1.0,\"d\":0.0},\"symbol\":\"m\",\"baseMeasurement\":{\"ancestry\":\"L\",\"type\":\"UM\"},\"type\":\"UAD\"}",
+                    "unitOfMeasureID": "osdu:reference-data--UnitOfMeasure:m:",
+                    "propertyNames": [
+                        "VerticalMeasurements[].VerticalMeasurement"
+                    ]
+                }
+            ],
+            "data": {
+                "Source": "TNO",
+                "NameAliases": [
+                    {
+                        "AliasName": "L14-07",
+                        "AliasNameTypeID": "osdu:reference-data--AliasNameType:Well:"
+                    },
+                    {
+                        "AliasName": "8374",
+                        "AliasNameTypeID": "osdu:reference-data--AliasNameType:UWI:"
+                    }
+                ],
+                "GeoContexts": [
+                    {
+                        "GeoPoliticalEntityID": "osdu:master-data--GeoPoliticalEntity:Netherlands_Country:",
+                        "GeoTypeID": "osdu:reference-data--GeoPoliticalEntityType:Country:"
+                    },
+                    {
+                        "GeoPoliticalEntityID": "osdu:master-data--GeoPoliticalEntity:L14_BlockID:",
+                        "GeoTypeID": "osdu:reference-data--GeoPoliticalEntityType:BlockID:"
+                    }
+                ],
+                "SpatialLocation": {
+                    "Wgs84Coordinates": {
+                        "type": "FeatureCollection",
+                        "features": [
+                            {
+                                "type": "Feature",
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [
+                                        4.42624141,
+                                        53.27313484
+                                    ]
+                                },
+                                "properties": {}
+                            }
+                        ]
+                    }
+                },
+                "FacilityTypeID": "osdu:reference-data--FacilityType:Well:",
+                "FacilityOperators": [
+                    {
+                        "FacilityOperatorOrganisationID": "osdu:master-data--Organisation:Occidental:"
+                    }
+                ],
+                "OperatingEnvironmentID": "osdu:reference-data--OperatingEnvironment:Off:",
+                "FacilityName": "L14-07",
+                "FacilityStates": [
+                    {
+                        "FacilityStateTypeID": "osdu:reference-data--FacilityStateType:Abandoned:"
+                    }
+                ],
+                "FacilityEvents": [
+                    {
+                        "FacilityEventTypeID": "osdu:reference-data--FacilityEventType:Spud:",
+                        "EffectiveDateTime": "1997-10-31T00:00:00"
+                    },
+                    {
+                        "FacilityEventTypeID": "osdu:reference-data--FacilityEventType:TDReached:",
+                        "EffectiveDateTime": "1997-12-14T00:00:00"
+                    }
+                ],
+                "DefaultVerticalMeasurementID": "KB",
+                "VerticalMeasurements": [
+                    {
+                        "VerticalMeasurementID": "KB",
+                        "VerticalMeasurement": 40.0,
+                        "VerticalMeasurementTypeID": "osdu:reference-data--VerticalMeasurementType:KB:",
+                        "VerticalMeasurementPathID": "osdu:reference-data--VerticalMeasurementPath:Elevation:",
+                        "VerticalCRSID": "osdu:reference-data--CoordinateReferenceSystem:MSL:"
+                    }
+                ]
+            },
+            "legal": {
+                "legaltags": [],
+                "otherRelevantDataCountries": []
+            }
+        }
+    ]
+}
