@@ -1,4 +1,4 @@
-name: '4. Stamp Install'
+name: '4a. Stamp Airflow'
 
 on:
   workflow_dispatch:
