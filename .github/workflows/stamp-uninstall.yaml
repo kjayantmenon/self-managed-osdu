@@ -1,4 +1,4 @@
-name: '6. Stamp Uninstall'
+name: "8. Stamp Uninstall"
 
 on:
   workflow_dispatch:
@@ -7,7 +7,6 @@ env:
   CLI_VERSION: 2.30.0
 
 jobs:
-
   delete:
     name: Uninstall Process
     runs-on: ubuntu-latest
@@ -16,7 +15,7 @@ jobs:
       - uses: Azure/login@v1.1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      -  uses: actions/checkout@v2
+      - uses: actions/checkout@v2
       - name: Install Flux
         run: curl -s https://fluxcd.io/install.sh | bash;
 
@@ -32,7 +31,7 @@ jobs:
       - name: AKS Context
         uses: azure/aks-set-context@v1
         with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          creds: "${{ secrets.AZURE_CREDENTIALS }}"
           cluster-name: ${{ env.CLUSTER_NAME }}
           resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
 
@@ -43,6 +42,51 @@ jobs:
         run: |
           flux suspend kustomization flux-system
           flux suspend kustomization osdu-stamp
+
+      - name: Uninstall ddms-wellbore
+        env:
+          OK: ${{ secrets.UNINSTALL }}
+          NAMESPACE: ddms-wellbore
+        if: contains(env.OK, 'true')
+        run: |
+          CHARTS=('ddms-wellbore')
+          for CHART in "${CHARTS[@]}"
+          do
+            if [ ! -z $(helm status $CHART -n $NAMESPACE -o json |jq -r ".info.status") ]
+            then
+              flux delete helmrelease $CHART -n $NAMESPACE --silent
+            fi
+          done
+
+      - name: Uninstall ddms-seismic
+        env:
+          OK: ${{ secrets.UNINSTALL }}
+          NAMESPACE: ddms-seismic
+        if: contains(env.OK, 'true')
+        run: |
+          CHARTS=('ddms-seismic')
+          for CHART in "${CHARTS[@]}"
+          do
+            if [ ! -z $(helm status $CHART -n $NAMESPACE -o json |jq -r ".info.status") ]
+            then
+              flux delete helmrelease $CHART -n $NAMESPACE --silent
+            fi
+          done
+
+      - name: Uninstall dev-env
+        env:
+          OK: ${{ secrets.UNINSTALL }}
+          NAMESPACE: dev-sample
+        if: contains(env.OK, 'true')
+        run: |
+          CHARTS=('env-tool')
+          for CHART in "${CHARTS[@]}"
+          do
+            if [ ! -z $(helm status $CHART -n $NAMESPACE -o json |jq -r ".info.status") ]
+            then
+              flux delete helmrelease $CHART -n $NAMESPACE --silent
+            fi
+          done
 
       - name: Uninstall osdu-azure
         env:
@@ -86,7 +130,7 @@ jobs:
           NAMESPACE: dev-sample
         if: contains(env.OK, 'true')
         run: |
-          if [ ! -z $(helm status env-tool -n dev-sample -o json |jq -r ".info.status") ]
+          if [ ! -z $(helm status dev-sample-env-tool -n dev-sample -o json |jq -r ".info.status") ]
           then
             flux delete helmrelease env-tool -n dev-sample --silent
           fi
@@ -106,9 +150,20 @@ jobs:
             helm uninstall airflow -n $NAMESPACE
           fi
           if [ ! -z $(helm status airflow-base -n $NAMESPACE -o json |jq -r ".info.status") ]
-            then
-              flux delete helmrelease airflow-base -n $NAMESPACE --silent
-            fi
+          then
+            flux delete helmrelease airflow-base -n $NAMESPACE --silent
+          fi
+
+      - name: Uninstall Elastic
+        env:
+          OK: ${{ secrets.UNINSTALL }}
+          NAMESPACE: elastic-system
+        if: contains(env.OK, 'true')
+        run: |
+          if [ ! -z $(helm status eck -n $NAMESPACE -o json |jq -r ".info.status") ]
+          then
+            helm uninstall eck -n $NAMESPACE
+          fi
 
       - name: Uninstall osdu-istio
         env:
@@ -154,11 +209,14 @@ jobs:
           OK: ${{ secrets.UNINSTALL }}
         if: contains(env.OK, 'true')
         run: |
+          kubectl delete CustomResourceDefinition istiooperators.install.istio.io --ignore-not-found
           kubectl delete namespace ddms-wellbore --ignore-not-found
           kubectl delete namespace ddms-seismic --ignore-not-found
           kubectl delete namespace osdu-azure --ignore-not-found
           kubectl delete namespace dev-sample --ignore-not-found
           kubectl delete namespace airflow --ignore-not-found
+          kubectl delete namespace elastic-instance --ignore-not-found
+          kubectl delete namespace elastic-system --ignore-not-found
           kubectl delete namespace istio-system --ignore-not-found
 
       - name: Remove osdu-stamp
@@ -175,8 +233,8 @@ jobs:
         if: contains(env.OK, 'true')
         uses: EndBug/add-and-commit@v7
         with:
-          message: 'Software Removed'
-          add: '.'
+          message: "Software Removed"
+          add: "."
 
       - name: Remove Flux
         env:
@@ -218,5 +276,5 @@ jobs:
         if: contains(env.OK, 'true')
         uses: EndBug/add-and-commit@v7
         with:
-          message: 'Software Removed'
-          add: '.'
+          message: "Software Removed"
+          add: "."
